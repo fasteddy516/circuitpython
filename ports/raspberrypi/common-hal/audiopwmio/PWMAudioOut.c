@@ -1,28 +1,8 @@
-/*
- * This file is part of the MicroPython project, http://micropython.org/
- *
- * The MIT License (MIT)
- *
- * Copyright (c) 2019 Jeff Epler for Adafruit Industries
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+// This file is part of the CircuitPython project: https://circuitpython.org
+//
+// SPDX-FileCopyrightText: Copyright (c) 2019 Jeff Epler for Adafruit Industries
+//
+// SPDX-License-Identifier: MIT
 
 #include "common-hal/audiopwmio/PWMAudioOut.h"
 
@@ -101,28 +81,18 @@ static uint32_t limit_denominator(uint32_t max_denominator, uint32_t num_in, uin
     return bound1_num;
 }
 
-void audiopwmout_reset() {
-    for (size_t i = 0; i < NUM_DMA_TIMERS; i++) {
-        dma_hw->timer[i] = 0;
-    }
-}
-
 // Caller validates that pins are free.
 void common_hal_audiopwmio_pwmaudioout_construct(audiopwmio_pwmaudioout_obj_t *self,
     const mcu_pin_obj_t *left_channel, const mcu_pin_obj_t *right_channel, uint16_t quiescent_value) {
 
-    self->stereo = right_channel != NULL;
+    self->stereo = left_channel != NULL && right_channel != NULL;
 
     if (self->stereo) {
         if (pwm_gpio_to_slice_num(left_channel->number) != pwm_gpio_to_slice_num(right_channel->number)) {
             mp_raise_ValueError(MP_ERROR_TEXT("Pins must share PWM slice"));
         }
-        if (pwm_gpio_to_channel(left_channel->number) != 0) {
-            mp_raise_ValueError(MP_ERROR_TEXT("Stereo left must be on PWM channel A"));
-        }
-        if (pwm_gpio_to_channel(right_channel->number) != 1) {
-            mp_raise_ValueError(MP_ERROR_TEXT("Stereo right must be on PWM channel B"));
-        }
+        // Check channel swapping, by default left_channel == 0
+        self->swap_channel = pwm_gpio_to_channel(left_channel->number) != 0;
     }
 
     // Typically pwmout doesn't let us change frequency with two objects on the
@@ -233,7 +203,8 @@ void common_hal_audiopwmio_pwmaudioout_play(audiopwmio_pwmaudioout_obj_t *self, 
         false,  // output signed
         BITS_PER_SAMPLE,
         (uint32_t)tx_register,  // output register: PWM cc register
-        0x3b + pacing_timer); // data request line
+        0x3b + pacing_timer, // data request line
+        self->swap_channel);
 
     if (result == AUDIO_DMA_DMA_BUSY) {
         common_hal_audiopwmio_pwmaudioout_stop(self);

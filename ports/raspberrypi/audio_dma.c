@@ -1,28 +1,8 @@
-/*
- * This file is part of the MicroPython project, http://micropython.org/
- *
- * The MIT License (MIT)
- *
- * Copyright (c) 2021 Scott Shawcroft for Adafruit Industries
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+// This file is part of the CircuitPython project: https://circuitpython.org
+//
+// SPDX-FileCopyrightText: Copyright (c) 2021 Scott Shawcroft for Adafruit Industries
+//
+// SPDX-License-Identifier: MIT
 
 #include "audio_dma.h"
 
@@ -36,6 +16,8 @@
 #include "py/runtime.h"
 
 #include "src/rp2_common/hardware_irq/include/hardware/irq.h"
+#include "hardware/regs/intctrl.h" // For isr_ macro.
+
 
 #if CIRCUITPY_AUDIOCORE
 
@@ -50,7 +32,7 @@ void audio_dma_reset(void) {
 }
 
 
-STATIC size_t audio_dma_convert_samples(audio_dma_t *dma, uint8_t *input, uint32_t input_length, uint8_t *output, uint32_t output_length) {
+static size_t audio_dma_convert_samples(audio_dma_t *dma, uint8_t *input, uint32_t input_length, uint8_t *output, uint32_t output_length) {
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wcast-align"
 
@@ -122,12 +104,20 @@ STATIC size_t audio_dma_convert_samples(audio_dma_t *dma, uint8_t *input, uint32
         // Not currently used, but might be in the future.
         mp_raise_RuntimeError(MP_ERROR_TEXT("Audio conversion not implemented"));
     }
+    if (dma->swap_channel) {
+        // Loop for swapping left and right channels
+        for (uint32_t i = 0; i < out_i; i += 2) {
+            uint16_t temp = ((uint16_t *)output)[i];
+            ((uint16_t *)output)[i] = ((uint16_t *)output)[i + 1];
+            ((uint16_t *)output)[i + 1] = temp;
+        }
+    }
     #pragma GCC diagnostic pop
     return output_length_used;
 }
 
 // buffer_idx is 0 or 1.
-STATIC void audio_dma_load_next_block(audio_dma_t *dma, size_t buffer_idx) {
+static void audio_dma_load_next_block(audio_dma_t *dma, size_t buffer_idx) {
     size_t dma_channel = dma->channel[buffer_idx];
 
     audioio_get_buffer_result_t get_buffer_result;
@@ -183,7 +173,8 @@ audio_dma_result audio_dma_setup_playback(
     bool output_signed,
     uint8_t output_resolution,
     uint32_t output_register_address,
-    uint8_t dma_trigger_source) {
+    uint8_t dma_trigger_source,
+    bool swap_channel) {
 
     // Use two DMA channels to play because the DMA can't wrap to itself without the
     // buffer being power of two aligned.
@@ -212,6 +203,7 @@ audio_dma_result audio_dma_setup_playback(
     dma->output_resolution = output_resolution;
     dma->sample_resolution = audiosample_bits_per_sample(sample);
     dma->output_register_address = output_register_address;
+    dma->swap_channel = swap_channel;
 
     audiosample_reset_buffer(sample, single_channel_output, audio_channel);
 
@@ -442,7 +434,7 @@ bool audio_dma_get_playing(audio_dma_t *dma) {
 // background tasks such as this and causes a stack overflow.
 // NOTE(dhalbert): I successfully printed from here while debugging.
 // So it's possible, but be careful.
-STATIC void dma_callback_fun(void *arg) {
+static void dma_callback_fun(void *arg) {
     audio_dma_t *dma = arg;
     if (dma == NULL) {
         return;
@@ -469,7 +461,7 @@ STATIC void dma_callback_fun(void *arg) {
     }
 }
 
-void isr_dma_0(void) {
+void __not_in_flash_func(isr_dma_0)(void) {
     for (size_t i = 0; i < NUM_DMA_CHANNELS; i++) {
         uint32_t mask = 1 << i;
         if ((dma_hw->intr & mask) == 0) {

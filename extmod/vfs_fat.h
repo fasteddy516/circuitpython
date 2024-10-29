@@ -34,6 +34,10 @@ typedef struct _fs_user_mount_t {
     mp_obj_base_t base;
     mp_vfs_blockdev_t blockdev;
     FATFS fatfs;
+
+    // CIRCUITPY-CHANGE: Count the users that are manipulating the blockdev via
+    // native fatfs so we can lock and unlock the blockdev.
+    int8_t lock_count;
 } fs_user_mount_t;
 
 extern const byte fresult_to_errno_table[20];
@@ -43,6 +47,7 @@ extern const mp_obj_type_t mp_type_vfs_fat_textio;
 
 MP_DECLARE_CONST_FUN_OBJ_3(fat_vfs_open_obj);
 
+// CIRCUITPY-CHANGE
 typedef struct _pyb_file_obj_t {
     mp_obj_base_t base;
     FIL fp;

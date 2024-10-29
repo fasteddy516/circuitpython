@@ -38,6 +38,14 @@ internal_memory = {
         ("Internal SRAM 1", (0x3FC8_0000, 0x4037_8000), 416 * 1024),
         ("Internal SRAM 2", (0x3FCF_0000,), 64 * 1024),
     ],
+    "esp32p4": [
+        # Name, Start, Length
+        ("RTC Fast Memory", (0x600F_E000,), 8 * 1024),
+        ("RTC Slow Memory", (0x5000_0000,), 8 * 1024),
+        ("Internal SRAM 0", (0x4037_0000,), 32 * 1024),
+        ("Internal SRAM 1", (0x3FC8_0000, 0x4037_8000), 416 * 1024),
+        ("Internal SRAM 2", (0x3FCF_0000,), 64 * 1024),
+    ],
     "esp32c2": [
         # Name, Start, Length
         ("Internal SRAM 0", (0x4037_C000,), 16 * 1024),
@@ -115,6 +123,9 @@ with open(sys.argv[1], "rb") as stream:
         size = section["sh_size"]
         offset = section["sh_offset"]
         if not size or not start:
+            continue
+        if section.name.endswith("dummy"):
+            # print("Skipping dummy section", section.name)
             continue
         # This handles sections that span two memory regions, not more than that.
         # print(start, size, offset, section.name)

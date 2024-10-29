@@ -1,31 +1,10 @@
-/*
- * This file is part of the Micro Python project, http://micropython.org/
- *
- * The MIT License (MIT)
- *
- * Copyright (c) 2018 hathach for Adafruit Industries
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+// This file is part of the CircuitPython project: https://circuitpython.org
+//
+// SPDX-FileCopyrightText: Copyright (c) 2018 hathach for Adafruit Industries
+//
+// SPDX-License-Identifier: MIT
 
-#ifndef MICROPY_INCLUDED_SUPERVISOR_USB_H
-#define MICROPY_INCLUDED_SUPERVISOR_USB_H
+#pragma once
 
 #include <stdbool.h>
 #include <stddef.h>
@@ -81,20 +60,15 @@ void usb_setup_with_vm(void);
 
 
 // Propagate plug/unplug events to the MSC logic.
-#if CIRCUITPY_USB_MSC
+#if CIRCUITPY_USB_DEVICE && CIRCUITPY_USB_MSC
 void usb_msc_mount(void);
 void usb_msc_umount(void);
 bool usb_msc_ejected(void);
-
-// Locking MSC prevents presenting the drive on plug-in when in use by something
-// else (likely BLE.)
-bool usb_msc_lock(void);
-void usb_msc_unlock(void);
 #endif
 
 #if CIRCUITPY_USB_KEYBOARD_WORKFLOW
 void usb_keyboard_init(void);
-bool usb_keyboard_chars_available(void);
+uint32_t usb_keyboard_chars_available(void);
 char usb_keyboard_read_char(void);
 
 bool usb_keyboard_in_use(uint8_t dev_addr, uint8_t interface);
@@ -102,5 +76,3 @@ void usb_keyboard_detach(uint8_t dev_addr, uint8_t interface);
 void usb_keyboard_attach(uint8_t dev_addr, uint8_t interface);
 void usb_keymap_set(const uint8_t *buf, size_t len);
 #endif
-
-#endif // MICROPY_INCLUDED_SUPERVISOR_USB_H

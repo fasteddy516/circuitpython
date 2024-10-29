@@ -1,29 +1,9 @@
-/*
- * This file is part of the MicroPython project, http://micropython.org/
- *
- * The MIT License (MIT)
- *
- * Copyright (c) 2017 Scott Shawcroft for Adafruit Industries
- * Copyright (c) 2019 Lucian Copeland for Adafruit Industries
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+// This file is part of the CircuitPython project: https://circuitpython.org
+//
+// SPDX-FileCopyrightText: Copyright (c) 2017 Scott Shawcroft for Adafruit Industries
+// SPDX-FileCopyrightText: Copyright (c) 2019 Lucian Copeland for Adafruit Industries
+//
+// SPDX-License-Identifier: MIT
 
 #include <stdarg.h>
 #include <stdint.h>
@@ -32,7 +12,7 @@
 #include "supervisor/port.h"
 #include "supervisor/filesystem.h"
 #include "supervisor/shared/reload.h"
-#include "supervisor/serial.h"
+#include "supervisor/shared/serial.h"
 #include "py/mpprint.h"
 #include "py/runtime.h"
 
@@ -44,13 +24,10 @@
 #include "bindings/espulp/__init__.h"
 #include "common-hal/microcontroller/Pin.h"
 #include "common-hal/analogio/AnalogOut.h"
-#include "common-hal/busio/I2C.h"
 #include "common-hal/busio/SPI.h"
 #include "common-hal/busio/UART.h"
 #include "common-hal/dualbank/__init__.h"
 #include "common-hal/ps2io/Ps2.h"
-#include "common-hal/pulseio/PulseIn.h"
-#include "common-hal/pwmio/PWMOut.h"
 #include "common-hal/watchdog/WatchDogTimer.h"
 #include "common-hal/socketpool/Socket.h"
 #include "common-hal/wifi/__init__.h"
@@ -62,11 +39,8 @@
 #include "shared-bindings/socketpool/__init__.h"
 #include "shared-module/os/__init__.h"
 
-#include "peripherals/rmt.h"
-#include "peripherals/timer.h"
-
-#if CIRCUITPY_COUNTIO || CIRCUITPY_ROTARYIO || CIRCUITPY_FREQUENCYIO
-#include "peripherals/pcnt.h"
+#if CIRCUITPY_SDIOIO
+#include "common-hal/sdioio/SDCard.h"
 #endif
 
 #if CIRCUITPY_TOUCHIO_USE_NATIVE
@@ -86,9 +60,18 @@
 #include "soc/lp_aon_reg.h"
 #define CP_SAVED_WORD_REGISTER LP_AON_STORE0_REG
 #else
+#ifdef CONFIG_IDF_TARGET_ESP32P4
+#include "soc/lp_system_reg.h"
+#define CP_SAVED_WORD_REGISTER LP_SYSTEM_REG_LP_STORE15_REG
+
+#else
+// To-do idf v5.0: remove following include
 #include "soc/rtc_cntl_reg.h"
 #define CP_SAVED_WORD_REGISTER RTC_CNTL_STORE0_REG
 #endif
+
+#endif
+
 #include "soc/spi_pins.h"
 
 #include "bootloader_flash_config.h"
@@ -104,20 +87,21 @@
 #include "esp32/rom/efuse.h"
 #endif
 
+#if CIRCUITPY_SSL
+#include "shared-module/ssl/__init__.h"
+#endif
+
 #include "esp_log.h"
 #define TAG "port"
 
-uint32_t *heap;
-uint32_t heap_size;
-
-STATIC esp_timer_handle_t _tick_timer;
-STATIC esp_timer_handle_t _sleep_timer;
+static esp_timer_handle_t _tick_timer;
+static esp_timer_handle_t _sleep_timer;
 
 TaskHandle_t circuitpython_task = NULL;
 
 extern void esp_restart(void) NORETURN;
 
-STATIC void tick_on_cp_core(void *arg) {
+static void tick_on_cp_core(void *arg) {
     supervisor_tick();
 
     // CircuitPython's VM is run in a separate FreeRTOS task from timer callbacks. So, we have to
@@ -127,7 +111,7 @@ STATIC void tick_on_cp_core(void *arg) {
 
 // This function may happen on the PRO core when CP is on the APP core. So, make
 // sure we run on the CP core.
-STATIC void tick_timer_cb(void *arg) {
+static void tick_timer_cb(void *arg) {
     #if defined(CONFIG_FREERTOS_UNICORE) && CONFIG_FREERTOS_UNICORE
     tick_on_cp_core(arg);
     #else
@@ -255,9 +239,6 @@ safe_mode_t port_init(void) {
     esp_rom_install_uart_printf();
     #endif
 
-    heap = NULL;
-    heap_size = 0;
-
     #define pin_GPIOn(n) pin_GPIO##n
     #define pin_GPIOn_EXPAND(x) pin_GPIOn(x)
 
@@ -269,25 +250,14 @@ safe_mode_t port_init(void) {
     common_hal_never_reset_pin(&pin_GPIOn_EXPAND(CONFIG_CONSOLE_UART_RX_GPIO));
     #endif
 
-    #if DEBUG
-    // debug UART
-    #ifdef CONFIG_IDF_TARGET_ESP32C3
-    common_hal_never_reset_pin(&pin_GPIO20);
-    common_hal_never_reset_pin(&pin_GPIO21);
-    #elif defined(CONFIG_IDF_TARGET_ESP32S2) || defined(CONFIG_IDF_TARGET_ESP32S3)
-    common_hal_never_reset_pin(&pin_GPIO43);
-    common_hal_never_reset_pin(&pin_GPIO44);
-    #endif
-    #endif
-
     #ifndef ENABLE_JTAG
-    #define ENABLE_JTAG (defined(DEBUG) && DEBUG)
+    #define ENABLE_JTAG (0)
     #endif
 
     #if ENABLE_JTAG
     ESP_LOGI(TAG, "Marking JTAG pins never_reset");
     // JTAG
-    #ifdef CONFIG_IDF_TARGET_ESP32C3
+    #if defined(CONFIG_IDF_TARGET_ESP32C3) || defined(CONFIG_IDF_TARGET_ESP32C6)
     common_hal_never_reset_pin(&pin_GPIO4);
     common_hal_never_reset_pin(&pin_GPIO5);
     common_hal_never_reset_pin(&pin_GPIO6);
@@ -297,6 +267,11 @@ safe_mode_t port_init(void) {
     common_hal_never_reset_pin(&pin_GPIO40);
     common_hal_never_reset_pin(&pin_GPIO41);
     common_hal_never_reset_pin(&pin_GPIO42);
+    #elif defined(CONFIG_IDF_TARGET_ESP32P4)
+    common_hal_never_reset_pin(&pin_GPIO3);
+    common_hal_never_reset_pin(&pin_GPIO4);
+    common_hal_never_reset_pin(&pin_GPIO5);
+    common_hal_never_reset_pin(&pin_GPIO6);
     #endif
     #endif
 
@@ -329,19 +304,28 @@ void *port_malloc(size_t size, bool dma_capable) {
     if (dma_capable) {
         caps |= MALLOC_CAP_DMA;
     }
-    return heap_caps_malloc(size, caps);
+
+    void *ptr = NULL;
+    // Try SPIRAM first when available.
+    #ifdef CONFIG_SPIRAM
+    ptr = heap_caps_malloc(size, caps | MALLOC_CAP_SPIRAM);
+    #endif
+    if (ptr == NULL) {
+        ptr = heap_caps_malloc(size, caps);
+    }
+    return ptr;
 }
 
 void port_free(void *ptr) {
     heap_caps_free(ptr);
 }
 
-void port_realloc(void *ptr, size_t size) {
-    heap_caps_realloc(ptr, size, MALLOC_CAP_8BIT);
+void *port_realloc(void *ptr, size_t size) {
+    return heap_caps_realloc(ptr, size, MALLOC_CAP_8BIT);
 }
 
 size_t port_heap_get_largest_free_size(void) {
-    size_t free_size = heap_caps_get_largest_free_block(0);
+    size_t free_size = heap_caps_get_largest_free_block(MALLOC_CAP_8BIT);
     return free_size;
 }
 
@@ -351,6 +335,10 @@ void reset_port(void) {
     esp_camera_deinit();
     #endif
 
+    #if CIRCUITPY_SSL
+    ssl_reset();
+    #endif
+
     reset_all_pins();
 
     #if CIRCUITPY_ANALOGIO
@@ -358,13 +346,12 @@ void reset_port(void) {
     #endif
 
     #if CIRCUITPY_BUSIO
-    i2c_reset();
     spi_reset();
     uart_reset();
     #endif
 
-    #if CIRCUITPY_COUNTIO || CIRCUITPY_ROTARYIO || CIRCUITPY_FREQUENCYIO
-    peripherals_pcnt_reset();
+    #if CIRCUITPY_SDIOIO
+    sdioio_reset();
     #endif
 
     #if CIRCUITPY_DUALBANK
@@ -379,21 +366,8 @@ void reset_port(void) {
     espulp_reset();
     #endif
 
-    #if CIRCUITPY_FREQUENCYIO
-    peripherals_timer_reset();
-    #endif
-
     #if CIRCUITPY_PS2IO
     ps2_reset();
-    #endif
-
-    #if CIRCUITPY_PULSEIO
-    peripherals_rmt_reset();
-    pulsein_reset();
-    #endif
-
-    #if CIRCUITPY_PWMIO
-    pwmout_reset();
     #endif
 
     #if CIRCUITPY_RTC
@@ -422,7 +396,7 @@ void reset_to_bootloader(void) {
 }
 
 void reset_cpu(void) {
-    #ifndef CONFIG_IDF_TARGET_ARCH_RISCV
+    #if CIRCUITPY_DEBUG
     esp_backtrace_print(100);
     #endif
     esp_restart();
@@ -521,19 +495,11 @@ void port_post_boot_py(bool heap_valid) {
 }
 
 
-#if CIRCUITPY_CONSOLE_UART
-static int vprintf_adapter(const char *fmt, va_list ap) {
-    return mp_vprintf(&mp_plat_print, fmt, ap);
-}
-
-void port_serial_early_init(void) {
-    esp_log_set_vprintf(vprintf_adapter);
-}
-#endif
-
 // Wrap main in app_main that the IDF expects.
 extern void main(void);
 extern void app_main(void);
 void app_main(void) {
     main();
 }
+
+portMUX_TYPE background_task_mutex = portMUX_INITIALIZER_UNLOCKED;

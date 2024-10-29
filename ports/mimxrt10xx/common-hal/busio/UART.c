@@ -1,29 +1,9 @@
-/*
- * This file is part of the MicroPython project, http://micropython.org/
- *
- * The MIT License (MIT)
- *
- * SPDX-FileCopyrightText: Copyright (c) 2016 Damien P. George
- * Copyright (c) 2019 Artur Pacholec
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+// This file is part of the CircuitPython project: https://circuitpython.org
+//
+// SPDX-FileCopyrightText: Copyright (c) 2016 Damien P. George
+// SPDX-FileCopyrightText: Copyright (c) 2019 Artur Pacholec
+//
+// SPDX-License-Identifier: MIT
 
 #include "shared-bindings/microcontroller/Pin.h"
 #include "shared-bindings/microcontroller/__init__.h"
@@ -52,8 +32,8 @@
 
 
 // arrays use 0 based numbering: UART1 is stored at index 0
-STATIC bool reserved_uart[MP_ARRAY_SIZE(mcu_uart_banks)];
-STATIC bool never_reset_uart[MP_ARRAY_SIZE(mcu_uart_banks)];
+static bool reserved_uart[MP_ARRAY_SIZE(mcu_uart_banks)];
+static bool never_reset_uart[MP_ARRAY_SIZE(mcu_uart_banks)];
 
 #if IMXRT11XX
 #define UART_CLOCK_FREQ (24000000)
@@ -81,24 +61,6 @@ static void config_periph_pin(const mcu_periph_obj_t *periph) {
         | IOMUXC_SW_PAD_CTL_PAD_ODE(0)
         | IOMUXC_SW_PAD_CTL_PAD_DSE(6)
         | IOMUXC_SW_PAD_CTL_PAD_SRE(0));
-}
-
-STATIC void LPUART_UserCallback(LPUART_Type *base, lpuart_handle_t *handle, status_t status, void *user_data) {
-    busio_uart_obj_t *self = (busio_uart_obj_t *)user_data;
-
-    if (status == kStatus_LPUART_RxIdle) {
-        self->rx_ongoing = false;
-    }
-}
-
-void uart_reset(void) {
-    for (uint i = 0; i < MP_ARRAY_SIZE(mcu_uart_banks); i++) {
-        if (never_reset_uart[i]) {
-            continue;
-        }
-        reserved_uart[i] = false;
-        LPUART_Deinit(mcu_uart_banks[i]);
-    }
 }
 
 void common_hal_busio_uart_never_reset(busio_uart_obj_t *self) {
@@ -348,6 +310,8 @@ void common_hal_busio_uart_construct(busio_uart_obj_t *self,
 
     if (self->rx != NULL) {
         if (receiver_buffer == NULL) {
+            // One byte is used internally so add one to make sure we have enough space.
+            receiver_buffer_size += 1;
             self->ringbuf = gc_alloc(receiver_buffer_size, false);
         } else {
             self->ringbuf = receiver_buffer;
@@ -359,7 +323,8 @@ void common_hal_busio_uart_construct(busio_uart_obj_t *self,
             m_malloc_fail(receiver_buffer_size);
         }
 
-        LPUART_TransferCreateHandle(self->uart, &self->handle, LPUART_UserCallback, self);
+        // Use the internal ring buffer implementation.
+        LPUART_TransferCreateHandle(self->uart, &self->handle, NULL, NULL);
         // Pass actual allocated size; the LPUART routines are cognizant that
         // the capacity is one less than the size.
         LPUART_TransferStartRingBuffer(self->uart, &self->handle, self->ringbuf, receiver_buffer_size);
@@ -378,11 +343,12 @@ void common_hal_busio_uart_deinit(busio_uart_obj_t *self) {
         return;
     }
 
-    reserved_uart[self->index] = false;
-    never_reset_uart[self->index] = false;
-
+    LPUART_TransferStopRingBuffer(self->uart, &self->handle);
     LPUART_Deinit(self->uart);
     gc_free(self->ringbuf);
+
+    reserved_uart[self->index] = false;
+    never_reset_uart[self->index] = false;
 
     common_hal_reset_pin(self->rx);
     common_hal_reset_pin(self->tx);
@@ -395,7 +361,6 @@ void common_hal_busio_uart_deinit(busio_uart_obj_t *self) {
     self->cts = NULL;
     self->rts = NULL;
     self->rs485_dir = NULL;
-
 }
 
 // Read characters.
@@ -409,18 +374,24 @@ size_t common_hal_busio_uart_read(busio_uart_obj_t *self, uint8_t *data, size_t 
         return 0;
     }
 
-    lpuart_transfer_t xfer = {
-        .data = data,
-        .dataSize = len,
-    };
-
-    self->rx_ongoing = true;
-    LPUART_TransferReceiveNonBlocking(self->uart, &self->handle, &xfer, NULL);
-
+    size_t received = 0;
     uint64_t start_ticks = supervisor_ticks_ms64();
-
     // Wait for all bytes received or timeout
-    while (self->rx_ongoing && (supervisor_ticks_ms64() - start_ticks < self->timeout_ms)) {
+    while (received < len && (supervisor_ticks_ms64() - start_ticks < self->timeout_ms)) {
+        lpuart_transfer_t xfer = {
+            .data = data + received
+        };
+        size_t remaining = len - received;
+        xfer.dataSize = MIN(remaining, LPUART_TransferGetRxRingBufferLength(self->uart, &self->handle));
+        // Only request as much as has already been received. Otherwise, we need to deal with
+        // callbacks.
+        size_t additional_read = 0;
+        LPUART_TransferReceiveNonBlocking(self->uart, &self->handle, &xfer, &additional_read);
+        received += additional_read;
+        // Break early when we're done to skip background tasks.
+        if (received == len) {
+            break;
+        }
         RUN_BACKGROUND_TASKS;
 
         // Allow user to break out of a timeout with a KeyboardInterrupt.
@@ -429,30 +400,12 @@ size_t common_hal_busio_uart_read(busio_uart_obj_t *self, uint8_t *data, size_t 
         }
     }
 
-    // if we timed out, stop the transfer
-    if (self->rx_ongoing) {
-        uint32_t recvd = 0;
-        LPUART_TransferGetReceiveCount(self->uart, &self->handle, &recvd);
-        LPUART_TransferAbortReceive(self->uart, &self->handle);
-        if (recvd == 0) {
-            *errcode = EAGAIN;
-            return MP_STREAM_ERROR;
-        }
-        return recvd;
+    if (received == 0) {
+        *errcode = EAGAIN;
+        return MP_STREAM_ERROR;
     }
 
-    // No data left, we got it all
-    if (self->handle.rxData == NULL) {
-        return len;
-    }
-
-    // The only place we can reliably tell how many bytes have been received is from the current
-    // wp in the handle (because the abort nukes rxDataSize, and reading it before abort is a race.)
-    if (self->handle.rxData > data) {
-        return self->handle.rxData - data;
-    } else {
-        return len;
-    }
+    return received;
 }
 
 // Write characters.

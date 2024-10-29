@@ -7,15 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-11-16 15:03+0000\n"
-"Last-Translator: Can Kocyigit <cank3698@googlemail.com>\n"
+"PO-Revision-Date: 2024-07-03 19:09+0000\n"
+"Last-Translator: Hacı <qwehacim3542qwe@gmail.com>\n"
 "Language-Team: none\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.2\n"
+"X-Generator: Weblate 5.7-dev\n"
 
 #: main.c
 msgid ""
@@ -40,6 +40,9 @@ msgid ""
 "Please file an issue with your program at github.com/adafruit/circuitpython/"
 "issues."
 msgstr ""
+"\n"
+"Lütfen programınızla ilgili bir sorunu github.com/adafruit/circuitpython/"
+"issues adresinden bildirin."
 
 #: supervisor/shared/safe_mode.c
 msgid ""
@@ -52,6 +55,8 @@ msgid ""
 "\n"
 "You are in safe mode because:\n"
 msgstr ""
+"\n"
+"Güvenli moddasın çünkü:\n"
 
 #: py/obj.c
 msgid "  File \"%q\""
@@ -98,6 +103,10 @@ msgstr "%q ve %q farklı olmalılar"
 msgid "%q and %q must share a clock unit"
 msgstr ""
 
+#: ports/nordic/common-hal/watchdog/WatchDogTimer.c
+msgid "%q cannot be changed once mode is set to %q"
+msgstr "Mod %q olarak ayarlandıktan sonra %q değiştirilemez"
+
 #: shared-bindings/microcontroller/Pin.c
 msgid "%q contains duplicate pins"
 msgstr "%q yinelenen pinler içeriyor"
@@ -113,11 +122,12 @@ msgstr ""
 #: ports/espressif/common-hal/espulp/ULP.c
 #: ports/mimxrt10xx/common-hal/audiobusio/__init__.c
 #: ports/mimxrt10xx/common-hal/usb_host/Port.c
-#: ports/raspberrypi/common-hal/picodvi/Framebuffer.c
+#: ports/raspberrypi/common-hal/picodvi/Framebuffer_RP2040.c
+#: ports/raspberrypi/common-hal/picodvi/Framebuffer_RP2350.c
 #: ports/raspberrypi/common-hal/rp2pio/StateMachine.c
 #: ports/raspberrypi/common-hal/usb_host/Port.c
 #: shared-bindings/digitalio/DigitalInOut.c
-#: shared-bindings/microcontroller/Pin.c
+#: shared-bindings/microcontroller/Pin.c shared-module/max3421e/Max3421E.c
 msgid "%q in use"
 msgstr "%q kullanımda"
 
@@ -157,7 +167,7 @@ msgstr "%q boyutu <= %d olmalıdır"
 msgid "%q length must be >= %d"
 msgstr "%q boyutu >= %d olmalıdır"
 
-#: py/objmodule.c py/runtime.c
+#: py/modsys.c py/objmodule.c py/runtime.c
 msgid "%q moved from %q to %q"
 msgstr ""
 
@@ -215,7 +225,8 @@ msgid "%q must be multiple of 8."
 msgstr ""
 
 #: ports/raspberrypi/bindings/cyw43/__init__.c py/argcheck.c py/objexcept.c
-#: shared-bindings/canio/CAN.c shared-bindings/digitalio/Pull.c
+#: shared-bindings/bitmapfilter/__init__.c shared-bindings/canio/CAN.c
+#: shared-bindings/digitalio/Pull.c shared-bindings/supervisor/__init__.c
 #: shared-module/synthio/Synthesizer.c
 msgid "%q must be of type %q or %q, not %q"
 msgstr ""
@@ -224,7 +235,8 @@ msgstr ""
 msgid "%q must be of type %q, %q, or %q, not %q"
 msgstr ""
 
-#: py/argcheck.c shared-module/synthio/__init__.c
+#: py/argcheck.c py/runtime.c shared-bindings/bitmapfilter/__init__.c
+#: shared-module/synthio/__init__.c
 msgid "%q must be of type %q, not %q"
 msgstr ""
 
@@ -238,10 +250,10 @@ msgstr "%q sınırların dışında"
 
 #: ports/atmel-samd/common-hal/pulseio/PulseIn.c
 #: ports/cxd56/common-hal/pulseio/PulseIn.c
-#: ports/nrf/common-hal/pulseio/PulseIn.c
+#: ports/nordic/common-hal/pulseio/PulseIn.c
 #: ports/raspberrypi/common-hal/rp2pio/StateMachine.c
 #: ports/stm/common-hal/pulseio/PulseIn.c py/argcheck.c
-#: shared-bindings/canio/Match.c
+#: shared-bindings/canio/Match.c shared-bindings/time/__init__.c
 msgid "%q out of range"
 msgstr "%q aralık dışında"
 
@@ -255,7 +267,7 @@ msgstr "%q sıfır olamaz"
 
 #: shared-module/bitbangio/I2C.c
 msgid "%q too long"
-msgstr ""
+msgstr "%q çok uzun"
 
 #: py/bc.c py/objnamedtuple.c
 msgid "%q() takes %d positional arguments but %d were given"
@@ -269,7 +281,8 @@ msgstr ""
 msgid "%q, %q, and %q must all be the same length"
 msgstr "%q, %q ve %q aynı uzunlukta olmalıdır"
 
-#: py/objint.c shared-bindings/storage/__init__.c
+#: py/objint.c shared-bindings/_bleio/Connection.c
+#: shared-bindings/storage/__init__.c
 msgid "%q=%q"
 msgstr "%q=%q"
 
@@ -401,7 +414,7 @@ msgstr "fonksiyon dışında 'await'"
 
 #: py/compile.c
 msgid "'break'/'continue' outside loop"
-msgstr ""
+msgstr "Döngü dışında 'break'/'continue'"
 
 #: py/compile.c
 msgid "'data' requires at least 2 arguments"
@@ -414,6 +427,10 @@ msgstr "'data' integer tipinde argümanlara ihtiyaç duyar"
 #: py/compile.c
 msgid "'label' requires 1 argument"
 msgstr "'label' 1 argümana ihtiyaç duyar"
+
+#: py/emitnative.c
+msgid "'not' not implemented"
+msgstr ""
 
 #: py/compile.c
 msgid "'return' outside function"
@@ -463,7 +480,7 @@ msgid "Address must be %d bytes long"
 msgstr "Adres %d byte uzunluğunda olmalıdır"
 
 #: ports/espressif/common-hal/memorymap/AddressRange.c
-#: ports/nrf/common-hal/memorymap/AddressRange.c
+#: ports/nordic/common-hal/memorymap/AddressRange.c
 #: ports/raspberrypi/common-hal/memorymap/AddressRange.c
 msgid "Address range not allowed"
 msgstr ""
@@ -478,15 +495,9 @@ msgstr "Tüm CAN çevre birimleri kullanımda"
 
 #: ports/espressif/common-hal/busio/I2C.c
 #: ports/espressif/common-hal/i2ctarget/I2CTarget.c
-#: ports/nrf/common-hal/busio/I2C.c
+#: ports/nordic/common-hal/busio/I2C.c
 msgid "All I2C peripherals are in use"
 msgstr "Tüm I2C çevre birimleri kullanımda"
-
-#: ports/espressif/common-hal/countio/Counter.c
-#: ports/espressif/common-hal/frequencyio/FrequencyIn.c
-#: ports/espressif/common-hal/rotaryio/IncrementalEncoder.c
-msgid "All PCNT units in use"
-msgstr "Tüm PCNT birimleri kullanımda"
 
 #: ports/atmel-samd/common-hal/canio/Listener.c
 #: ports/espressif/common-hal/canio/Listener.c
@@ -494,18 +505,17 @@ msgstr "Tüm PCNT birimleri kullanımda"
 msgid "All RX FIFOs in use"
 msgstr "Tüm RX FIFO'ları kullanımda"
 
-#: ports/espressif/common-hal/busio/SPI.c ports/nrf/common-hal/busio/SPI.c
+#: ports/espressif/common-hal/busio/SPI.c ports/nordic/common-hal/busio/SPI.c
 msgid "All SPI peripherals are in use"
 msgstr "Tüm SPI çevre birimleri kullanımda"
 
-#: ports/espressif/common-hal/busio/UART.c ports/nrf/common-hal/busio/UART.c
+#: ports/espressif/common-hal/busio/UART.c ports/nordic/common-hal/busio/UART.c
 msgid "All UART peripherals are in use"
 msgstr "Tüm UART çevre birimleri kullanımda"
 
-#: ports/nrf/common-hal/countio/Counter.c
-#: ports/nrf/common-hal/pulseio/PulseIn.c
-#: ports/nrf/common-hal/rotaryio/IncrementalEncoder.c
-#: shared-bindings/pwmio/PWMOut.c
+#: ports/nordic/common-hal/countio/Counter.c
+#: ports/nordic/common-hal/pulseio/PulseIn.c
+#: ports/nordic/common-hal/rotaryio/IncrementalEncoder.c
 msgid "All channels in use"
 msgstr "Tüm kanallar kullanımda"
 
@@ -517,7 +527,8 @@ msgstr ""
 msgid "All event channels in use"
 msgstr "Tüm olay kanalları kullanımda"
 
-#: ports/raspberrypi/common-hal/picodvi/Framebuffer.c
+#: ports/raspberrypi/common-hal/floppyio/__init__.c
+#: ports/raspberrypi/common-hal/picodvi/Framebuffer_RP2040.c
 #: ports/raspberrypi/common-hal/rp2pio/StateMachine.c
 #: ports/raspberrypi/common-hal/usb_host/Port.c
 msgid "All state machines in use"
@@ -527,36 +538,35 @@ msgstr "Tüm durum makineleri kullanımda"
 msgid "All sync event channels in use"
 msgstr "Tüm asenkron olay kanalları kullanımda"
 
-#: ports/raspberrypi/common-hal/picodvi/Framebuffer.c
-#: shared-bindings/pwmio/PWMOut.c
+#: ports/raspberrypi/common-hal/picodvi/Framebuffer_RP2040.c
 msgid "All timers for this pin are in use"
 msgstr "Bu pin için tüm zamanlayıcılar kullanımda"
 
 #: ports/atmel-samd/common-hal/_pew/PewPew.c
 #: ports/atmel-samd/common-hal/audioio/AudioOut.c
-#: ports/atmel-samd/common-hal/frequencyio/FrequencyIn.c
 #: ports/atmel-samd/common-hal/pulseio/PulseIn.c
 #: ports/atmel-samd/common-hal/pulseio/PulseOut.c
 #: ports/cxd56/common-hal/pulseio/PulseOut.c
-#: ports/espressif/common-hal/frequencyio/FrequencyIn.c
-#: ports/espressif/common-hal/neopixel_write/__init__.c
-#: ports/espressif/common-hal/pulseio/PulseIn.c
-#: ports/espressif/common-hal/pulseio/PulseOut.c
-#: ports/nrf/common-hal/audiopwmio/PWMAudioOut.c
-#: ports/nrf/common-hal/pulseio/PulseIn.c ports/nrf/peripherals/nrf/timers.c
+#: ports/nordic/common-hal/audiopwmio/PWMAudioOut.c
+#: ports/nordic/common-hal/pulseio/PulseIn.c
+#: ports/nordic/peripherals/nrf/timers.c
 #: ports/raspberrypi/common-hal/audiopwmio/PWMAudioOut.c
-#: ports/stm/peripherals/timers.c shared-bindings/pwmio/PWMOut.c
+#: ports/stm/peripherals/timers.c
 msgid "All timers in use"
 msgstr "Tüm zamanlayıcılar kullanımda"
 
 #: ports/espressif/common-hal/_bleio/Adapter.c
-#: ports/nrf/common-hal/_bleio/Adapter.c
+#: ports/nordic/common-hal/_bleio/Adapter.c
 msgid "Already advertising."
 msgstr "Halihazırda duyuruluyor."
 
 #: ports/atmel-samd/common-hal/canio/Listener.c
 msgid "Already have all-matches listener"
 msgstr "Tüm eşleşmelerle eşleşen dinleyiciniz var"
+
+#: ports/espressif/common-hal/_bleio/__init__.c
+msgid "Already in progress"
+msgstr ""
 
 #: ports/espressif/bindings/espnow/ESPNow.c
 #: ports/espressif/common-hal/espulp/ULP.c
@@ -671,13 +681,13 @@ msgid "Buffer length %d too big. It must be less than %d"
 msgstr "Mevcut arabellek boyutu %d çok büyük. En fazla %d kadar olmalı"
 
 #: ports/atmel-samd/common-hal/sdioio/SDCard.c
-#: ports/cxd56/common-hal/sdioio/SDCard.c shared-module/sdcardio/SDCard.c
-msgid "Buffer length must be a multiple of 512"
-msgstr "Arabellek boyutu 512'nin katı olmalı"
-
+#: ports/cxd56/common-hal/sdioio/SDCard.c
+#: ports/espressif/common-hal/sdioio/SDCard.c
 #: ports/stm/common-hal/sdioio/SDCard.c shared-bindings/floppyio/__init__.c
-msgid "Buffer must be a multiple of 512 bytes"
-msgstr "Buffer 512 bitin katı olmalı"
+#: shared-module/sdcardio/SDCard.c
+#, c-format
+msgid "Buffer must be a multiple of %d bytes"
+msgstr ""
 
 #: shared-bindings/_bleio/PacketBuffer.c
 #, c-format
@@ -691,13 +701,9 @@ msgstr "Buffer bitten %d daha az"
 msgid "Buffer too small"
 msgstr ""
 
-#: ports/espressif/common-hal/imagecapture/ParallelImageCapture.c
-msgid "Buffers must be same size"
-msgstr "Arabellek boyutları aynı olmalı"
-
 #: ports/atmel-samd/common-hal/paralleldisplaybus/ParallelBus.c
 #: ports/espressif/common-hal/paralleldisplaybus/ParallelBus.c
-#: ports/nrf/common-hal/paralleldisplaybus/ParallelBus.c
+#: ports/nordic/common-hal/paralleldisplaybus/ParallelBus.c
 #: ports/raspberrypi/common-hal/paralleldisplaybus/ParallelBus.c
 #, c-format
 msgid "Bus pin %d is already in use"
@@ -740,12 +746,13 @@ msgid "Can only alarm on two low pins from deep sleep."
 msgstr ""
 
 #: ports/espressif/common-hal/_bleio/Characteristic.c
-#: ports/nrf/common-hal/_bleio/Characteristic.c
+#: ports/nordic/common-hal/_bleio/Characteristic.c
 msgid "Can't set CCCD on local Characteristic"
 msgstr ""
 
 #: shared-bindings/storage/__init__.c shared-bindings/usb_cdc/__init__.c
 #: shared-bindings/usb_hid/__init__.c shared-bindings/usb_midi/__init__.c
+#: shared-bindings/usb_video/__init__.c
 msgid "Cannot change USB devices now"
 msgstr "USB aygıtları şu an değiştirilemez"
 
@@ -761,12 +768,12 @@ msgstr "Değerler silinemez"
 
 #: ports/atmel-samd/common-hal/digitalio/DigitalInOut.c
 #: ports/mimxrt10xx/common-hal/digitalio/DigitalInOut.c
-#: ports/nrf/common-hal/digitalio/DigitalInOut.c
+#: ports/nordic/common-hal/digitalio/DigitalInOut.c
 #: ports/raspberrypi/common-hal/digitalio/DigitalInOut.c
 msgid "Cannot get pull while in output mode"
 msgstr "Çıkış modundayken çekme alınamıyor"
 
-#: ports/nrf/common-hal/microcontroller/Processor.c
+#: ports/nordic/common-hal/microcontroller/Processor.c
 msgid "Cannot get temperature"
 msgstr "Isı okunamadı"
 
@@ -787,16 +794,6 @@ msgstr "Dosyaya kayıt yapılamıyor"
 msgid "Cannot remount '/' when visible via USB."
 msgstr "'/' USB ile görünür olduğunda, yeniden bağlanamaz."
 
-#: ports/atmel-samd/common-hal/microcontroller/__init__.c
-#: ports/cxd56/common-hal/microcontroller/__init__.c
-#: ports/mimxrt10xx/common-hal/microcontroller/__init__.c
-msgid "Cannot reset into bootloader because no bootloader is present"
-msgstr "Hiçbir bootloader bulunmadığından bootloader sıfırlanamıyor"
-
-#: ports/espressif/common-hal/socketpool/Socket.c
-msgid "Cannot set socket options"
-msgstr "Soket seçenekleri ayarlanamıyor"
-
 #: shared-bindings/digitalio/DigitalInOut.c
 msgid "Cannot set value when direction is input."
 msgstr "Yön, giriş olduğunda değer ayarlanamıyor."
@@ -810,11 +807,7 @@ msgstr "RS485 modunda RTS veya CTS belirtilemez"
 msgid "Cannot subclass slice"
 msgstr ""
 
-#: shared-bindings/pwmio/PWMOut.c
-msgid "Cannot vary frequency on a timer that is already in use"
-msgstr "Kullanımda olan bir zamanlayıcının frekansı değiştirilemez"
-
-#: ports/nrf/common-hal/alarm/pin/PinAlarm.c
+#: ports/nordic/common-hal/alarm/pin/PinAlarm.c
 msgid "Cannot wake on pin edge, only level"
 msgstr ""
 
@@ -848,17 +841,9 @@ msgstr ""
 msgid "Coordinate arrays types have different sizes"
 msgstr ""
 
-#: ports/espressif/common-hal/neopixel_write/__init__.c
-msgid "Could not retrieve clock"
-msgstr ""
-
 #: shared-bindings/_bleio/Adapter.c
 msgid "Could not set address"
 msgstr "Adres ayarlanamadı"
-
-#: shared-bindings/pwmio/PWMOut.c
-msgid "Could not start PWM"
-msgstr "PWM başlatılamadı"
 
 #: ports/stm/common-hal/busio/UART.c
 msgid "Could not start interrupt, RX busy"
@@ -881,7 +866,7 @@ msgid "DAC already in use"
 msgstr "DAC zaten kullanımda"
 
 #: ports/atmel-samd/common-hal/paralleldisplaybus/ParallelBus.c
-#: ports/nrf/common-hal/paralleldisplaybus/ParallelBus.c
+#: ports/nordic/common-hal/paralleldisplaybus/ParallelBus.c
 msgid "Data 0 pin must be byte aligned"
 msgstr "Data 0 pini bite hizalı olmalı"
 
@@ -894,21 +879,17 @@ msgid "Data format error (may be broken data)"
 msgstr ""
 
 #: ports/espressif/common-hal/_bleio/Adapter.c
-#: ports/nrf/common-hal/_bleio/Adapter.c
+#: ports/nordic/common-hal/_bleio/Adapter.c
 msgid "Data not supported with directed advertising"
 msgstr ""
 
 #: ports/espressif/common-hal/_bleio/Adapter.c
-#: ports/nrf/common-hal/_bleio/Adapter.c
+#: ports/nordic/common-hal/_bleio/Adapter.c
 msgid "Data too large for advertisement packet"
 msgstr ""
 
 #: ports/stm/common-hal/alarm/pin/PinAlarm.c
 msgid "Deep sleep pins must use a rising edge with pulldown"
-msgstr ""
-
-#: shared-module/jpegio/JpegDecoder.c
-msgid "Destination bitmap too small to contain image"
 msgstr ""
 
 #: shared-bindings/audiobusio/PDMIn.c
@@ -919,7 +900,7 @@ msgstr "Hedef kapasitesi, hedef_uzunluğundan daha küçük."
 msgid "Device error or wrong termination of input stream"
 msgstr ""
 
-#: ports/nrf/common-hal/audiobusio/I2SOut.c
+#: ports/nordic/common-hal/audiobusio/I2SOut.c
 msgid "Device in use"
 msgstr "Cihaz kullanımda"
 
@@ -955,16 +936,6 @@ msgstr "ECB aynı anda yalnızca 16 baytla çalışır"
 msgid "ESP-IDF memory allocation failed"
 msgstr ""
 
-#: ports/atmel-samd/common-hal/alarm/pin/PinAlarm.c
-#: ports/atmel-samd/common-hal/countio/Counter.c
-#: ports/atmel-samd/common-hal/frequencyio/FrequencyIn.c
-#: ports/atmel-samd/common-hal/ps2io/Ps2.c
-#: ports/atmel-samd/common-hal/pulseio/PulseIn.c
-#: ports/atmel-samd/common-hal/rotaryio/IncrementalEncoder.c
-#: ports/cxd56/common-hal/pulseio/PulseIn.c
-msgid "EXTINT channel already in use"
-msgstr "EXTINT kanalı zaten kullanımda"
-
 #: extmod/modre.c
 msgid "Error in regex"
 msgstr "regex'te hata"
@@ -973,16 +944,12 @@ msgstr "regex'te hata"
 msgid "Error in safemode.py."
 msgstr ""
 
-#: shared-bindings/socketpool/Socket.c shared-bindings/ssl/SSLSocket.c
-msgid "Error: Failure to bind"
-msgstr "Hata: Bağlanamadı"
-
 #: shared-bindings/alarm/__init__.c
 msgid "Expected a kind of %q"
 msgstr ""
 
 #: ports/espressif/common-hal/_bleio/Adapter.c
-#: ports/nrf/common-hal/_bleio/Adapter.c
+#: ports/nordic/common-hal/_bleio/Adapter.c
 msgid "Extended advertisements with scan response not supported."
 msgstr ""
 
@@ -994,15 +961,11 @@ msgstr "FFT sadece ndarrays'te tanımlandı"
 msgid "FFT is implemented for linear arrays only"
 msgstr "FFT yalnızca doğrusal diziler için uygulanır"
 
-#: ports/espressif/common-hal/ssl/SSLSocket.c
-msgid "Failed SSL handshake"
-msgstr "SSL el sıkışma hatası"
-
 #: shared-bindings/ps2io/Ps2.c
 msgid "Failed sending command."
 msgstr "Komut gönderilemedi."
 
-#: ports/nrf/sd_mutex.c
+#: ports/nordic/sd_mutex.c
 #, c-format
 msgid "Failed to acquire mutex, err 0x%04x"
 msgstr "Muteks alınamadı, err 0x%04x"
@@ -1033,11 +996,11 @@ msgid "Failed to buffer the sample"
 msgstr ""
 
 #: ports/espressif/common-hal/_bleio/Adapter.c
-#: ports/nrf/common-hal/_bleio/Adapter.c
+#: ports/nordic/common-hal/_bleio/Adapter.c
 msgid "Failed to connect: internal error"
 msgstr "Bağlantı kurulamadı: internal error"
 
-#: ports/nrf/common-hal/_bleio/Adapter.c
+#: ports/nordic/common-hal/_bleio/Adapter.c
 msgid "Failed to connect: timeout"
 msgstr "Bağlantı kurulamadı: timeout"
 
@@ -1045,7 +1008,7 @@ msgstr "Bağlantı kurulamadı: timeout"
 msgid "Failed to parse MP3 file"
 msgstr "MP3 dosyası ayrıştırılamadı"
 
-#: ports/nrf/sd_mutex.c
+#: ports/nordic/sd_mutex.c
 #, c-format
 msgid "Failed to release mutex, err 0x%04x"
 msgstr "Muteks serbest bırakılamadı, err 0x%04x"
@@ -1101,10 +1064,6 @@ msgstr ""
 "Frekans 24, 150, 396, 450, 528, 600, 720, 816, 912, 960 ya da 1008 Mhz "
 "olmalıdır"
 
-#: shared-bindings/pwmio/PWMOut.c
-msgid "Frequency must match existing PWMOut using this timer"
-msgstr "Frekans, bu zamanlayıcıyı kullanan mevcut PWMOut ile eşleşmelidir"
-
 #: shared-bindings/bitbangio/I2C.c shared-bindings/bitbangio/SPI.c
 #: shared-bindings/busio/I2C.c shared-bindings/busio/SPI.c
 msgid "Function requires lock"
@@ -1137,11 +1096,6 @@ msgstr "Donanım kullanımda, alternatif pinleri deneyin"
 
 #: supervisor/shared/safe_mode.c
 msgid "Heap allocation when VM not running."
-msgstr ""
-
-#: supervisor/shared/safe_mode.c
-msgid ""
-"Heap was corrupted because the stack was too small. Increase stack size."
 msgstr ""
 
 #: extmod/vfs_posix_file.c py/objstringio.c
@@ -1186,15 +1140,17 @@ msgstr "Giriş buffer uzunluğu (%d) strand sayımının (%d) katı olmalıdır"
 msgid "Input taking too long"
 msgstr "Giriş çok uzun sürüyor"
 
-#: ports/espressif/common-hal/neopixel_write/__init__.c py/moderrno.c
+#: py/moderrno.c
 msgid "Input/output error"
 msgstr "Giriş/çıkış hatası"
 
-#: ports/nrf/common-hal/_bleio/__init__.c
+#: ports/espressif/common-hal/_bleio/__init__.c
+#: ports/nordic/common-hal/_bleio/__init__.c
 msgid "Insufficient authentication"
 msgstr "Yetersiz kimlik doğrulama"
 
-#: ports/nrf/common-hal/_bleio/__init__.c
+#: ports/espressif/common-hal/_bleio/__init__.c
+#: ports/nordic/common-hal/_bleio/__init__.c
 msgid "Insufficient encryption"
 msgstr "Yetersiz şifreleme"
 
@@ -1218,8 +1174,7 @@ msgstr "Dahili ses arabelleği çok küçük"
 msgid "Internal define error"
 msgstr "Dahili tanımlama hatası"
 
-#: ports/espressif/common-hal/paralleldisplaybus/ParallelBus.c
-#: shared-module/os/getenv.c
+#: shared-bindings/pwmio/PWMOut.c shared-module/os/getenv.c
 msgid "Internal error"
 msgstr "Dahili hata"
 
@@ -1227,6 +1182,19 @@ msgstr "Dahili hata"
 #, c-format
 msgid "Internal error #%d"
 msgstr "Dahili hata #%d"
+
+#: ports/atmel-samd/common-hal/alarm/pin/PinAlarm.c
+#: ports/atmel-samd/common-hal/countio/Counter.c
+#: ports/atmel-samd/common-hal/frequencyio/FrequencyIn.c
+#: ports/atmel-samd/common-hal/max3421e/Max3421E.c
+#: ports/atmel-samd/common-hal/ps2io/Ps2.c
+#: ports/atmel-samd/common-hal/pulseio/PulseIn.c
+#: ports/atmel-samd/common-hal/rotaryio/IncrementalEncoder.c
+#: ports/cxd56/common-hal/pulseio/PulseIn.c
+#: ports/raspberrypi/common-hal/picodvi/Framebuffer_RP2350.c
+#: shared-bindings/pwmio/PWMOut.c
+msgid "Internal resource(s) in use"
+msgstr ""
 
 #: supervisor/shared/safe_mode.c
 msgid "Internal watchdog timer expired."
@@ -1240,14 +1208,24 @@ msgstr ""
 msgid "Interrupted by output function"
 msgstr ""
 
+#: ports/espressif/common-hal/_bleio/Service.c
+#: ports/espressif/common-hal/espulp/ULP.c
+#: ports/espressif/common-hal/microcontroller/Processor.c
 #: ports/mimxrt10xx/common-hal/audiobusio/__init__.c
 #: ports/mimxrt10xx/common-hal/pwmio/PWMOut.c
 #: ports/raspberrypi/bindings/picodvi/Framebuffer.c
-#: ports/raspberrypi/common-hal/picodvi/Framebuffer.c py/argcheck.c
+#: ports/raspberrypi/bindings/rp2pio/StateMachine.c
+#: ports/raspberrypi/common-hal/picodvi/Framebuffer_RP2040.c py/argcheck.c
 #: shared-bindings/digitalio/DigitalInOut.c
-#: shared-bindings/epaperdisplay/EPaperDisplay.c
+#: shared-bindings/epaperdisplay/EPaperDisplay.c shared-bindings/pwmio/PWMOut.c
+#: shared-module/aurora_epaper/aurora_framebuffer.c
 msgid "Invalid %q"
 msgstr "Geçersiz %q"
+
+#: ports/raspberrypi/common-hal/picodvi/Framebuffer_RP2350.c
+#: shared-module/aurora_epaper/aurora_framebuffer.c
+msgid "Invalid %q and %q"
+msgstr ""
 
 #: ports/atmel-samd/common-hal/microcontroller/Pin.c
 #: ports/espressif/common-hal/dotclockframebuffer/DotClockFramebuffer.c
@@ -1261,7 +1239,7 @@ msgid "Invalid ADC Unit value"
 msgstr "Geçersiz ADC Ünite değeri"
 
 #: ports/espressif/common-hal/_bleio/__init__.c
-#: ports/nrf/common-hal/_bleio/__init__.c
+#: ports/nordic/common-hal/_bleio/__init__.c
 msgid "Invalid BLE parameter"
 msgstr "Geçersiz BLE parametresi"
 
@@ -1312,8 +1290,7 @@ msgstr "Geçersiz multicast MAC adresi"
 msgid "Invalid size"
 msgstr "Geçersiz boyut"
 
-#: ports/espressif/common-hal/ssl/SSLContext.c
-#: ports/raspberrypi/common-hal/ssl/SSLSocket.c
+#: shared-module/ssl/SSLSocket.c
 msgid "Invalid socket for TLS"
 msgstr "TLS için geçersiz soket"
 
@@ -1349,9 +1326,18 @@ msgstr "Katman zaten bir grupta"
 msgid "Layer must be a Group or TileGrid subclass"
 msgstr "Katman, bir Grup ya da TileGrid alt sınıfı olmalıdır"
 
+#: shared-bindings/audiocore/RawSample.c
+msgid "Length of %q must be an even multiple of channel_count * type_size"
+msgstr ""
+
 #: ports/espressif/common-hal/espidf/__init__.c
 msgid "MAC address was invalid"
 msgstr "MAC adresi geçersiz"
+
+#: ports/espressif/common-hal/_bleio/Characteristic.c
+#: ports/espressif/common-hal/_bleio/Descriptor.c
+msgid "MITM security not supported"
+msgstr ""
 
 #: shared-bindings/is31fl3741/IS31FL3741.c
 msgid "Mapping must be a tuple"
@@ -1394,6 +1380,10 @@ msgstr ""
 msgid "Missing jmp_pin. %q[%u] jumps on pin"
 msgstr ""
 
+#: shared-module/storage/__init__.c
+msgid "Mount point directory missing"
+msgstr ""
+
 #: shared-bindings/busio/UART.c shared-bindings/displayio/Group.c
 msgid "Must be a %q subclass."
 msgstr ""
@@ -1423,10 +1413,6 @@ msgstr "NVS hatası"
 msgid "Name or service not known"
 msgstr ""
 
-#: py/qstr.c
-msgid "Name too long"
-msgstr "İsim çok uzun"
-
 #: shared-bindings/displayio/TileGrid.c
 msgid "New bitmap must be same size as old bitmap"
 msgstr ""
@@ -1439,7 +1425,8 @@ msgstr ""
 #: ports/espressif/common-hal/busio/SPI.c
 #: ports/espressif/common-hal/busio/UART.c
 #: ports/mimxrt10xx/common-hal/busio/SPI.c
-#: ports/mimxrt10xx/common-hal/busio/UART.c ports/nrf/common-hal/busio/UART.c
+#: ports/mimxrt10xx/common-hal/busio/UART.c
+#: ports/nordic/common-hal/busio/UART.c
 #: ports/raspberrypi/common-hal/busio/UART.c ports/stm/common-hal/busio/SPI.c
 #: ports/stm/common-hal/busio/UART.c shared-bindings/fourwire/FourWire.c
 #: shared-bindings/i2cdisplaybus/I2CDisplayBus.c
@@ -1449,7 +1436,7 @@ msgid "No %q pin"
 msgstr "%q pini yok"
 
 #: ports/espressif/common-hal/_bleio/Characteristic.c
-#: ports/nrf/common-hal/_bleio/Characteristic.c
+#: ports/nordic/common-hal/_bleio/Characteristic.c
 msgid "No CCCD for this Characteristic"
 msgstr ""
 
@@ -1478,12 +1465,10 @@ msgstr ""
 msgid "No IP"
 msgstr "IP yok"
 
-#: ports/atmel-samd/common-hal/frequencyio/FrequencyIn.c
-msgid "No available clocks"
-msgstr "Kullanılabilir saat yok"
-
-#: ports/espressif/common-hal/imagecapture/ParallelImageCapture.c
-msgid "No capture in progress"
+#: ports/atmel-samd/common-hal/microcontroller/__init__.c
+#: ports/cxd56/common-hal/microcontroller/__init__.c
+#: ports/mimxrt10xx/common-hal/microcontroller/__init__.c
+msgid "No bootloader present"
 msgstr ""
 
 #: shared-module/usb/core/Device.c
@@ -1498,13 +1483,10 @@ msgstr ""
 msgid "No default %q bus"
 msgstr ""
 
+#: ports/atmel-samd/common-hal/audiobusio/I2SOut.c
 #: ports/atmel-samd/common-hal/audiobusio/PDMIn.c
 #: ports/atmel-samd/common-hal/touchio/TouchIn.c
 msgid "No free GCLKs"
-msgstr ""
-
-#: ports/atmel-samd/common-hal/audiobusio/I2SOut.c
-msgid "No free GLCKs"
 msgstr ""
 
 #: shared-bindings/os/__init__.c
@@ -1533,7 +1515,7 @@ msgstr ""
 
 #: ports/atmel-samd/common-hal/busio/I2C.c
 #: ports/espressif/common-hal/busio/I2C.c
-#: ports/mimxrt10xx/common-hal/busio/I2C.c ports/nrf/common-hal/busio/I2C.c
+#: ports/mimxrt10xx/common-hal/busio/I2C.c ports/nordic/common-hal/busio/I2C.c
 #: ports/raspberrypi/common-hal/busio/I2C.c
 msgid "No pull up found on SDA or SCL; check your wiring"
 msgstr ""
@@ -1562,7 +1544,7 @@ msgstr ""
 msgid "No usb host port initialized"
 msgstr ""
 
-#: ports/nrf/common-hal/_bleio/__init__.c
+#: ports/nordic/common-hal/_bleio/__init__.c
 msgid "Nordic system firmware out of memory"
 msgstr ""
 
@@ -1571,7 +1553,7 @@ msgid "Not a valid IP string"
 msgstr ""
 
 #: ports/espressif/common-hal/_bleio/__init__.c
-#: ports/nrf/common-hal/_bleio/__init__.c
+#: ports/nordic/common-hal/_bleio/__init__.c
 #: shared-bindings/_bleio/CharacteristicBuffer.c
 msgid "Not connected"
 msgstr ""
@@ -1586,8 +1568,9 @@ msgid "Not supported JPEG standard"
 msgstr ""
 
 #: ports/espressif/common-hal/paralleldisplaybus/ParallelBus.c
+#: ports/espressif/common-hal/sdioio/SDCard.c
 #, c-format
-msgid "Number of data_pins must be 8 or 16, not %d"
+msgid "Number of data_pins must be %d or %d, not %d"
 msgstr ""
 
 #: shared-bindings/util.c
@@ -1595,7 +1578,7 @@ msgid ""
 "Object has been deinitialized and can no longer be used. Create a new object."
 msgstr ""
 
-#: ports/nrf/common-hal/busio/UART.c
+#: ports/nordic/common-hal/busio/UART.c
 msgid "Odd parity is not supported"
 msgstr ""
 
@@ -1618,7 +1601,6 @@ msgstr ""
 msgid "Only IPv4 addresses supported"
 msgstr ""
 
-#: ports/espressif/common-hal/socketpool/Socket.c
 #: ports/raspberrypi/common-hal/socketpool/Socket.c
 msgid "Only IPv4 sockets supported"
 msgstr ""
@@ -1662,7 +1644,7 @@ msgid "Only one address is allowed"
 msgstr ""
 
 #: ports/atmel-samd/common-hal/alarm/time/TimeAlarm.c
-#: ports/nrf/common-hal/alarm/time/TimeAlarm.c
+#: ports/nordic/common-hal/alarm/time/TimeAlarm.c
 #: ports/stm/common-hal/alarm/time/TimeAlarm.c
 msgid "Only one alarm.time alarm can be set"
 msgstr ""
@@ -1703,11 +1685,6 @@ msgstr ""
 
 #: ports/raspberrypi/bindings/rp2pio/StateMachine.c
 msgid "Out-buffer elements must be <= 4 bytes long"
-msgstr ""
-
-#: shared-bindings/pwmio/PWMOut.c
-msgid ""
-"PWM frequency not writable when variable_frequency is False on construction."
 msgstr ""
 
 #: ports/stm/common-hal/pwmio/PWMOut.c
@@ -1753,11 +1730,6 @@ msgstr ""
 
 #: ports/raspberrypi/common-hal/countio/Counter.c
 msgid "Pin must be on PWM Channel B"
-msgstr ""
-
-#: ports/atmel-samd/common-hal/countio/Counter.c
-#: ports/atmel-samd/common-hal/rotaryio/IncrementalEncoder.c
-msgid "Pin must support hardware interrupts"
 msgstr ""
 
 #: shared-bindings/rgbmatrix/RGBMatrix.c
@@ -1848,7 +1820,7 @@ msgid "RNG Init Error"
 msgstr ""
 
 #: ports/atmel-samd/common-hal/busio/UART.c ports/cxd56/common-hal/busio/UART.c
-#: ports/nrf/common-hal/busio/UART.c ports/stm/common-hal/busio/UART.c
+#: ports/nordic/common-hal/busio/UART.c ports/stm/common-hal/busio/UART.c
 msgid "RS485"
 msgstr ""
 
@@ -1868,7 +1840,7 @@ msgstr ""
 #: shared-bindings/_bleio/__init__.c
 #: shared-bindings/memorymonitor/AllocationSize.c
 #: shared-bindings/pulseio/PulseIn.c shared-module/bitmaptools/__init__.c
-#: shared-module/displayio/Bitmap.c
+#: shared-module/displayio/Bitmap.c shared-module/displayio/Group.c
 msgid "Read-only"
 msgstr ""
 
@@ -1925,9 +1897,10 @@ msgstr ""
 msgid "SDIO GetCardInfo Error %d"
 msgstr ""
 
+#: ports/espressif/common-hal/sdioio/SDCard.c
 #: ports/stm/common-hal/sdioio/SDCard.c
 #, c-format
-msgid "SDIO Init Error %d"
+msgid "SDIO Init Error %x"
 msgstr ""
 
 #: ports/espressif/common-hal/busio/SPI.c
@@ -1951,7 +1924,7 @@ msgid "Scale dimensions must divide by 3"
 msgstr ""
 
 #: ports/espressif/common-hal/_bleio/Adapter.c
-#: ports/nrf/common-hal/_bleio/Adapter.c
+#: ports/nordic/common-hal/_bleio/Adapter.c
 msgid "Scan already in progress. Stop with stop_scan."
 msgstr ""
 
@@ -1993,12 +1966,8 @@ msgstr ""
 msgid "Specify exactly one of data0 or data_pins"
 msgstr ""
 
-#: ports/raspberrypi/common-hal/audiopwmio/PWMAudioOut.c
-msgid "Stereo left must be on PWM channel A"
-msgstr ""
-
-#: ports/raspberrypi/common-hal/audiopwmio/PWMAudioOut.c
-msgid "Stereo right must be on PWM channel B"
+#: supervisor/shared/safe_mode.c
+msgid "Stack overflow. Increase stack size."
 msgstr ""
 
 #: shared-bindings/alarm/time/TimeAlarm.c
@@ -2025,20 +1994,8 @@ msgstr ""
 msgid "The length of rgb_pins must be 6, 12, 18, 24, or 30"
 msgstr ""
 
-#: shared-module/audiomixer/MixerVoice.c
-msgid "The sample's bits_per_sample does not match the mixer's"
-msgstr ""
-
-#: shared-module/audiomixer/MixerVoice.c
-msgid "The sample's channel count does not match the mixer's"
-msgstr ""
-
-#: shared-module/audiomixer/MixerVoice.c
-msgid "The sample's sample rate does not match the mixer's"
-msgstr ""
-
-#: shared-module/audiomixer/MixerVoice.c
-msgid "The sample's signedness does not match the mixer's"
+#: shared-module/audiodelays/Echo.c shared-module/audiomixer/MixerVoice.c
+msgid "The sample's %q does not match"
 msgstr ""
 
 #: supervisor/shared/safe_mode.c
@@ -2072,7 +2029,7 @@ msgid "Time is in the past."
 msgstr ""
 
 #: ports/espressif/common-hal/_bleio/Adapter.c
-#: ports/nrf/common-hal/_bleio/Adapter.c
+#: ports/nordic/common-hal/_bleio/Adapter.c
 #, c-format
 msgid "Timeout is too long: Maximum timeout length is %d seconds"
 msgstr ""
@@ -2085,6 +2042,10 @@ msgstr ""
 msgid "Too many channels in sample."
 msgstr ""
 
+#: ports/espressif/common-hal/_bleio/Characteristic.c
+msgid "Too many descriptors"
+msgstr ""
+
 #: shared-module/displayio/__init__.c
 msgid "Too many display busses; forgot displayio.release_displays() ?"
 msgstr ""
@@ -2094,7 +2055,7 @@ msgid "Too many displays"
 msgstr ""
 
 #: ports/espressif/common-hal/_bleio/PacketBuffer.c
-#: ports/nrf/common-hal/_bleio/PacketBuffer.c
+#: ports/nordic/common-hal/_bleio/PacketBuffer.c
 msgid "Total data to write is larger than %q"
 msgstr ""
 
@@ -2105,10 +2066,6 @@ msgstr ""
 
 #: py/obj.c
 msgid "Traceback (most recent call last):\n"
-msgstr ""
-
-#: shared-bindings/time/__init__.c
-msgid "Tuple or struct_time argument required"
 msgstr ""
 
 #: ports/stm/common-hal/busio/UART.c
@@ -2214,13 +2171,8 @@ msgstr ""
 msgid "Unable to write to sleep_memory."
 msgstr ""
 
-#: ports/nrf/common-hal/_bleio/UUID.c
+#: ports/nordic/common-hal/_bleio/UUID.c
 msgid "Unexpected nrfx uuid type"
-msgstr ""
-
-#: ports/espressif/common-hal/ssl/SSLSocket.c
-#, c-format
-msgid "Unhandled ESP TLS error %d %d %x %d"
 msgstr ""
 
 #: ports/espressif/common-hal/_bleio/__init__.c
@@ -2233,6 +2185,7 @@ msgstr ""
 msgid "Unknown BLE error: %d"
 msgstr ""
 
+#: ports/espressif/common-hal/max3421e/Max3421E.c
 #: ports/raspberrypi/common-hal/wifi/__init__.c
 #, c-format
 msgid "Unknown error code %d"
@@ -2243,7 +2196,7 @@ msgstr ""
 msgid "Unknown failure %d"
 msgstr ""
 
-#: ports/nrf/common-hal/_bleio/__init__.c
+#: ports/nordic/common-hal/_bleio/__init__.c
 #, c-format
 msgid "Unknown gatt error: 0x%04x"
 msgstr ""
@@ -2253,7 +2206,7 @@ msgstr ""
 msgid "Unknown reason."
 msgstr ""
 
-#: ports/nrf/common-hal/_bleio/__init__.c
+#: ports/nordic/common-hal/_bleio/__init__.c
 #, c-format
 msgid "Unknown security error: 0x%04x"
 msgstr ""
@@ -2263,7 +2216,7 @@ msgstr ""
 msgid "Unknown system firmware error at %s:%d: %d"
 msgstr ""
 
-#: ports/nrf/common-hal/_bleio/__init__.c
+#: ports/nordic/common-hal/_bleio/__init__.c
 #, c-format
 msgid "Unknown system firmware error: %04x"
 msgstr ""
@@ -2279,7 +2232,7 @@ msgstr ""
 msgid "Unmatched number of items on RHS (expected %d, got %d)."
 msgstr ""
 
-#: ports/nrf/common-hal/_bleio/__init__.c
+#: ports/nordic/common-hal/_bleio/__init__.c
 msgid ""
 "Unspecified issue. Can be that the pairing prompt on the other device was "
 "declined or ignored."
@@ -2301,21 +2254,24 @@ msgstr ""
 msgid "Unsupported hash algorithm"
 msgstr ""
 
+#: ports/espressif/common-hal/socketpool/Socket.c
+msgid "Unsupported socket type"
+msgstr ""
+
+#: ports/espressif/common-hal/_bleio/Adapter.c
 #: ports/espressif/common-hal/dualbank/__init__.c
-msgid "Update Failed"
+msgid "Update failed"
 msgstr ""
 
 #: ports/espressif/common-hal/_bleio/Characteristic.c
-#: ports/espressif/common-hal/_bleio/Descriptor.c
-#: ports/nrf/common-hal/_bleio/Characteristic.c
-#: ports/nrf/common-hal/_bleio/Descriptor.c
+#: ports/nordic/common-hal/_bleio/Characteristic.c
+#: ports/nordic/common-hal/_bleio/Descriptor.c
 msgid "Value length != required fixed length"
 msgstr ""
 
 #: ports/espressif/common-hal/_bleio/Characteristic.c
-#: ports/espressif/common-hal/_bleio/Descriptor.c
-#: ports/nrf/common-hal/_bleio/Characteristic.c
-#: ports/nrf/common-hal/_bleio/Descriptor.c
+#: ports/nordic/common-hal/_bleio/Characteristic.c
+#: ports/nordic/common-hal/_bleio/Descriptor.c
 msgid "Value length > max_length"
 msgstr ""
 
@@ -2331,7 +2287,7 @@ msgstr ""
 msgid "WARNING: Your code filename has two extensions\n"
 msgstr ""
 
-#: ports/nrf/common-hal/watchdog/WatchDogTimer.c
+#: ports/nordic/common-hal/watchdog/WatchDogTimer.c
 msgid "WatchDogTimer cannot be deinitialized once mode is set to RESET"
 msgstr ""
 
@@ -2358,7 +2314,7 @@ msgid "Woken up by alarm.\n"
 msgstr ""
 
 #: ports/espressif/common-hal/_bleio/PacketBuffer.c
-#: ports/nrf/common-hal/_bleio/PacketBuffer.c
+#: ports/nordic/common-hal/_bleio/PacketBuffer.c
 msgid "Writes not supported on Characteristic"
 msgstr ""
 
@@ -2384,6 +2340,11 @@ msgstr ""
 msgid "You pressed the BOOT button at start up"
 msgstr ""
 
+#: ports/espressif/boards/adafruit_feather_esp32c6_4mbflash_nopsram/mpconfigboard.h
+#: ports/espressif/boards/adafruit_itsybitsy_esp32/mpconfigboard.h
+msgid "You pressed the BOOT button at start up."
+msgstr ""
+
 #: ports/espressif/boards/adafruit_huzzah32_breakout/mpconfigboard.h
 msgid "You pressed the GPIO0 button at start up."
 msgstr ""
@@ -2397,6 +2358,7 @@ msgid "You pressed the SW38 button at start up."
 msgstr ""
 
 #: ports/espressif/boards/hardkernel_odroid_go/mpconfigboard.h
+#: ports/espressif/boards/vidi_x/mpconfigboard.h
 msgid "You pressed the VOLUME button at start up."
 msgstr ""
 
@@ -2407,7 +2369,7 @@ msgstr ""
 msgid "You pressed the central button at start up."
 msgstr ""
 
-#: ports/nrf/boards/aramcon2_badge/mpconfigboard.h
+#: ports/nordic/boards/aramcon2_badge/mpconfigboard.h
 msgid "You pressed the left button at start up."
 msgstr ""
 
@@ -2464,8 +2426,8 @@ msgstr ""
 msgid "argsort is not implemented for flattened arrays"
 msgstr ""
 
-#: py/runtime.c shared-bindings/supervisor/__init__.c
-msgid "argument has wrong type"
+#: extmod/ulab/code/numpy/random/random.c
+msgid "argument must be None, an integer or a tuple of integers"
 msgstr ""
 
 #: py/compile.c
@@ -2475,10 +2437,6 @@ msgstr ""
 #: py/argcheck.c shared-bindings/_stage/__init__.c
 #: shared-bindings/digitalio/DigitalInOut.c
 msgid "argument num/types mismatch"
-msgstr ""
-
-#: py/runtime.c
-msgid "argument should be a '%q' not a '%q'"
 msgstr ""
 
 #: extmod/ulab/code/numpy/numerical.c extmod/ulab/code/numpy/transform.c
@@ -2558,6 +2516,10 @@ msgstr ""
 msgid "binary op %q not implemented"
 msgstr ""
 
+#: shared-module/bitmapfilter/__init__.c
+msgid "bitmap size and depth must match"
+msgstr ""
+
 #: shared-bindings/bitmaptools/__init__.c
 msgid "bitmap sizes must match"
 msgstr ""
@@ -2566,7 +2528,7 @@ msgstr ""
 msgid "bits must be 32 or less"
 msgstr ""
 
-#: shared-bindings/audiomixer/Mixer.c
+#: shared-bindings/audiodelays/Echo.c shared-bindings/audiomixer/Mixer.c
 msgid "bits_per_sample must be 8 or 16"
 msgstr ""
 
@@ -2661,7 +2623,7 @@ msgstr ""
 msgid "can't convert %s to float"
 msgstr ""
 
-#: py/runtime.c
+#: py/objint.c py/runtime.c
 #, c-format
 msgid "can't convert %s to int"
 msgstr ""
@@ -2670,16 +2632,8 @@ msgstr ""
 msgid "can't convert '%q' object to %q implicitly"
 msgstr ""
 
-#: py/objint.c
-msgid "can't convert NaN to int"
-msgstr ""
-
 #: extmod/ulab/code/numpy/vector.c
 msgid "can't convert complex to float"
-msgstr ""
-
-#: py/objint.c
-msgid "can't convert inf to int"
 msgstr ""
 
 #: py/obj.c
@@ -2708,6 +2662,10 @@ msgstr ""
 
 #: py/emitnative.c
 msgid "can't do binary op between '%q' and '%q'"
+msgstr ""
+
+#: py/emitnative.c
+msgid "can't do unary op of '%q'"
 msgstr ""
 
 #: py/emitnative.c
@@ -2770,10 +2728,6 @@ msgstr ""
 
 #: py/objcomplex.c
 msgid "can't truncate-divide a complex number"
-msgstr ""
-
-#: extmod/moductypes.c
-msgid "can't unambiguously get sizeof scalar"
 msgstr ""
 
 #: extmod/modasyncio.c
@@ -3006,7 +2960,7 @@ msgstr ""
 msgid "epoch_time not supported on this board"
 msgstr ""
 
-#: ports/nrf/common-hal/busio/UART.c
+#: ports/nordic/common-hal/busio/UART.c
 #, c-format
 msgid "error = 0x%08lX"
 msgstr ""
@@ -3164,13 +3118,10 @@ msgstr ""
 msgid "function missing required positional argument #%d"
 msgstr ""
 
-#: py/argcheck.c py/bc.c py/objnamedtuple.c shared-bindings/time/__init__.c
+#: py/argcheck.c py/bc.c py/objnamedtuple.c shared-bindings/_eve/__init__.c
+#: shared-bindings/time/__init__.c
 #, c-format
 msgid "function takes %d positional arguments but %d were given"
-msgstr ""
-
-#: shared-bindings/time/__init__.c
-msgid "function takes exactly 9 arguments"
 msgstr ""
 
 #: py/objgenerator.c
@@ -3251,10 +3202,6 @@ msgstr ""
 msgid "indices must be integers, slices, or Boolean lists"
 msgstr ""
 
-#: ports/espressif/common-hal/busio/I2C.c
-msgid "init I2C"
-msgstr ""
-
 #: extmod/ulab/code/scipy/optimize/optimize.c
 msgid "initial values must be iterable"
 msgstr ""
@@ -3320,7 +3267,7 @@ msgstr ""
 msgid "input must be a dense ndarray"
 msgstr ""
 
-#: extmod/ulab/code/user/user.c
+#: extmod/ulab/code/user/user.c shared-bindings/_eve/__init__.c
 msgid "input must be an ndarray"
 msgstr ""
 
@@ -3362,7 +3309,7 @@ msgstr ""
 msgid "invalid bits_per_pixel %d, must be, 1, 2, 4, 8, 16, 24, or 32"
 msgstr ""
 
-#: ports/raspberrypi/common-hal/ssl/SSLSocket.c
+#: shared-module/ssl/SSLSocket.c
 msgid "invalid cert"
 msgstr ""
 
@@ -3388,7 +3335,7 @@ msgstr ""
 msgid "invalid hostname"
 msgstr ""
 
-#: ports/raspberrypi/common-hal/ssl/SSLSocket.c
+#: shared-module/ssl/SSLSocket.c
 msgid "invalid key"
 msgstr ""
 
@@ -3500,13 +3447,13 @@ msgid "matrix is not positive definite"
 msgstr ""
 
 #: ports/espressif/common-hal/_bleio/Descriptor.c
-#: ports/nrf/common-hal/_bleio/Characteristic.c
-#: ports/nrf/common-hal/_bleio/Descriptor.c
+#: ports/nordic/common-hal/_bleio/Characteristic.c
+#: ports/nordic/common-hal/_bleio/Descriptor.c
 #, c-format
 msgid "max_length must be 0-%d when fixed_length is %s"
 msgstr ""
 
-#: extmod/ulab/code/ndarray.c
+#: extmod/ulab/code/ndarray.c extmod/ulab/code/numpy/random/random.c
 msgid "maximum number of dimensions is "
 msgstr ""
 
@@ -3591,6 +3538,10 @@ msgstr ""
 msgid "name not defined"
 msgstr ""
 
+#: py/qstr.c
+msgid "name too long"
+msgstr ""
+
 #: py/persistentcode.c
 msgid "native code in .mpy unsupported"
 msgstr ""
@@ -3644,7 +3595,7 @@ msgstr ""
 msgid "no default packer"
 msgstr ""
 
-#: extmod/modrandom.c
+#: extmod/modrandom.c extmod/ulab/code/numpy/random/random.c
 msgid "no default seed"
 msgstr ""
 
@@ -3661,7 +3612,7 @@ msgid "no such attribute"
 msgstr ""
 
 #: ports/espressif/common-hal/_bleio/Connection.c
-#: ports/nrf/common-hal/_bleio/Connection.c
+#: ports/nordic/common-hal/_bleio/Connection.c
 msgid "non-UUID found in service_uuids_whitelist"
 msgstr ""
 
@@ -3673,7 +3624,7 @@ msgstr ""
 msgid "non-hex digit found"
 msgstr ""
 
-#: ports/nrf/common-hal/_bleio/Adapter.c
+#: ports/nordic/common-hal/_bleio/Adapter.c
 msgid "non-zero timeout must be > 0.01"
 msgstr ""
 
@@ -3779,7 +3730,7 @@ msgstr ""
 msgid "offset must be non-negative and no greater than buffer length"
 msgstr ""
 
-#: ports/nrf/common-hal/audiobusio/PDMIn.c
+#: ports/nordic/common-hal/audiobusio/PDMIn.c
 #: ports/stm/common-hal/audiobusio/PDMIn.c
 msgid "only bit_depth=16 is supported"
 msgstr ""
@@ -3796,7 +3747,7 @@ msgstr ""
 msgid "only oversample=64 is supported"
 msgstr ""
 
-#: ports/nrf/common-hal/audiobusio/PDMIn.c
+#: ports/nordic/common-hal/audiobusio/PDMIn.c
 #: ports/stm/common-hal/audiobusio/PDMIn.c
 msgid "only sample_rate=16000 is supported"
 msgstr ""
@@ -3853,6 +3804,10 @@ msgstr ""
 msgid "out array is too small"
 msgstr ""
 
+#: extmod/ulab/code/numpy/random/random.c
+msgid "out has wrong type"
+msgstr ""
+
 #: extmod/ulab/code/numpy/vector.c
 msgid "out keyword is not supported for complex dtype"
 msgstr ""
@@ -3877,6 +3832,14 @@ msgstr ""
 msgid "out of range of target"
 msgstr ""
 
+#: extmod/ulab/code/numpy/random/random.c
+msgid "output array has wrong type"
+msgstr ""
+
+#: extmod/ulab/code/numpy/random/random.c
+msgid "output array must be contiguous"
+msgstr ""
+
 #: py/objint_mpz.c
 msgid "overflow converting long int to machine word"
 msgstr ""
@@ -3898,10 +3861,6 @@ msgstr ""
 msgid "parameters must be registers in sequence r0 to r3"
 msgstr ""
 
-#: shared-bindings/bitmaptools/__init__.c
-msgid "pixel coordinates out of bounds"
-msgstr ""
-
 #: extmod/vfs_posix_file.c
 msgid "poll on file not available on win32"
 msgstr ""
@@ -3912,14 +3871,14 @@ msgstr ""
 
 #: ports/atmel-samd/common-hal/pulseio/PulseIn.c
 #: ports/cxd56/common-hal/pulseio/PulseIn.c
-#: ports/nrf/common-hal/pulseio/PulseIn.c
+#: ports/nordic/common-hal/pulseio/PulseIn.c
 #: ports/raspberrypi/common-hal/pulseio/PulseIn.c
 #: ports/stm/common-hal/pulseio/PulseIn.c py/objdict.c py/objlist.c py/objset.c
 #: shared-bindings/ps2io/Ps2.c
 msgid "pop from empty %q"
 msgstr ""
 
-#: shared-bindings/socketpool/Socket.c shared-bindings/ssl/SSLSocket.c
+#: shared-bindings/socketpool/Socket.c
 msgid "port must be >= 0"
 msgstr ""
 
@@ -4007,6 +3966,10 @@ msgstr ""
 msgid "set unsupported"
 msgstr ""
 
+#: extmod/ulab/code/numpy/random/random.c
+msgid "shape must be None, and integer or a tuple of integers"
+msgstr ""
+
 #: extmod/ulab/code/ndarray.c
 msgid "shape must be integer or tuple of integers"
 msgstr ""
@@ -4027,8 +3990,8 @@ msgstr ""
 msgid "size is defined for ndarrays only"
 msgstr ""
 
-#: shared-bindings/time/__init__.c
-msgid "sleep length must be non-negative"
+#: extmod/ulab/code/numpy/random/random.c
+msgid "size must match out.shape when used together"
 msgstr ""
 
 #: py/nativeglue.c
@@ -4104,18 +4067,6 @@ msgstr ""
 msgid "string indices must be integers, not %s"
 msgstr ""
 
-#: extmod/moductypes.c
-msgid "struct: can't index"
-msgstr ""
-
-#: extmod/moductypes.c
-msgid "struct: index out of range"
-msgstr ""
-
-#: extmod/moductypes.c
-msgid "struct: no fields"
-msgstr ""
-
 #: py/objarray.c py/objstr.c
 msgid "substring not found"
 msgstr ""
@@ -4128,20 +4079,25 @@ msgstr ""
 msgid "syntax error in JSON"
 msgstr ""
 
-#: extmod/moductypes.c
-msgid "syntax error in uctypes descriptor"
-msgstr ""
-
 #: extmod/modtime.c
 msgid "ticks interval overflow"
 msgstr ""
 
-#: ports/nrf/common-hal/watchdog/WatchDogTimer.c
+#: ports/nordic/common-hal/watchdog/WatchDogTimer.c
 msgid "timeout duration exceeded the maximum supported value"
 msgstr ""
 
-#: ports/nrf/common-hal/_bleio/Adapter.c
+#: ports/nordic/common-hal/_bleio/Adapter.c
 msgid "timeout must be < 655.35 secs"
+msgstr ""
+
+#: ports/raspberrypi/common-hal/floppyio/__init__.c
+msgid "timeout waiting for flux"
+msgstr ""
+
+#: ports/raspberrypi/common-hal/floppyio/__init__.c
+#: shared-module/floppyio/__init__.c
+msgid "timeout waiting for index pulse"
 msgstr ""
 
 #: shared-module/sdcardio/SDCard.c
@@ -4231,10 +4187,6 @@ msgstr ""
 msgid "ulonglong too large"
 msgstr ""
 
-#: py/emitnative.c
-msgid "unary op %q not implemented"
-msgstr ""
-
 #: py/parse.c
 msgid "unexpected indent"
 msgstr ""
@@ -4296,6 +4248,10 @@ msgstr ""
 msgid "unsupported Xtensa instruction '%s' with %d arguments"
 msgstr ""
 
+#: shared-module/bitmapfilter/__init__.c
+msgid "unsupported bitmap depth"
+msgstr ""
+
 #: shared-module/gifio/GifWriter.c
 msgid "unsupported colorspace for GifWriter"
 msgstr ""
@@ -4340,6 +4296,16 @@ msgstr ""
 
 #: extmod/moddeflate.c
 msgid "wbits"
+msgstr ""
+
+#: shared-bindings/bitmapfilter/__init__.c
+msgid ""
+"weights must be a sequence with an odd square number of elements (usually 9 "
+"or 25)"
+msgstr ""
+
+#: shared-bindings/bitmapfilter/__init__.c
+msgid "weights must be an object of type %q, %q, %q, or %q, not %q "
 msgstr ""
 
 #: shared-bindings/is31fl3741/FrameBuffer.c
@@ -4412,6 +4378,48 @@ msgstr ""
 #: extmod/ulab/code/scipy/signal/signal.c
 msgid "zi must be of shape (n_section, 2)"
 msgstr ""
+
+#~ msgid "Buffer length must be a multiple of 512"
+#~ msgstr "Arabellek boyutu 512'nin katı olmalı"
+
+#~ msgid "Buffer must be a multiple of 512 bytes"
+#~ msgstr "Buffer 512 bitin katı olmalı"
+
+#~ msgid "Name too long"
+#~ msgstr "İsim çok uzun"
+
+#~ msgid "Error: Failure to bind"
+#~ msgstr "Hata: Bağlanamadı"
+
+#~ msgid "Buffers must be same size"
+#~ msgstr "Arabellek boyutları aynı olmalı"
+
+#~ msgid "Cannot set socket options"
+#~ msgstr "Soket seçenekleri ayarlanamıyor"
+
+#~ msgid "Failed SSL handshake"
+#~ msgstr "SSL el sıkışma hatası"
+
+#~ msgid "All PCNT units in use"
+#~ msgstr "Tüm PCNT birimleri kullanımda"
+
+#~ msgid "Cannot reset into bootloader because no bootloader is present"
+#~ msgstr "Hiçbir bootloader bulunmadığından bootloader sıfırlanamıyor"
+
+#~ msgid "Cannot vary frequency on a timer that is already in use"
+#~ msgstr "Kullanımda olan bir zamanlayıcının frekansı değiştirilemez"
+
+#~ msgid "Could not start PWM"
+#~ msgstr "PWM başlatılamadı"
+
+#~ msgid "EXTINT channel already in use"
+#~ msgstr "EXTINT kanalı zaten kullanımda"
+
+#~ msgid "Frequency must match existing PWMOut using this timer"
+#~ msgstr "Frekans, bu zamanlayıcıyı kullanan mevcut PWMOut ile eşleşmelidir"
+
+#~ msgid "No available clocks"
+#~ msgstr "Kullanılabilir saat yok"
 
 #~ msgid "A hardware interrupt channel is already in use"
 #~ msgstr "Bir donanım kesme kanalı halihazırda kullanılmaktadır"

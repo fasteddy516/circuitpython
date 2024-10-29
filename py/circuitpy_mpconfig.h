@@ -1,35 +1,14 @@
-/*
- * This file is part of the MicroPython project, http://micropython.org/
- *
- * The MIT License (MIT)
- *
- * Copyright (c) 2019 Dan Halbert for Adafruit Industries
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+// This file is part of the CircuitPython project: https://circuitpython.org
+//
+// SPDX-FileCopyrightText: Copyright (c) 2019 Dan Halbert for Adafruit Industries
+//
+// SPDX-License-Identifier: MIT
 
 // This file contains settings that are common across CircuitPython ports, to make
 // sure that the same feature set and settings are used, such as in atmel-samd
-// and nrf.
+// and nordic.
 
-#ifndef __INCLUDED_MPCONFIG_CIRCUITPY_H
-#define __INCLUDED_MPCONFIG_CIRCUITPY_H
+#pragma once
 
 #include <stdint.h>
 #include <stdatomic.h>
@@ -37,6 +16,12 @@
 // This is CircuitPython.
 // Always 1: defined in circuitpy_mpconfig.mk
 // #define CIRCUITPY (1)
+
+// Can be removed once CircuitPython 10 is released.
+// Print warnings or not about deprecated names. See objmodule.c.
+#ifndef CIRCUITPY_8_9_WARNINGS
+#define CIRCUITPY_8_9_WARNINGS (0)
+#endif
 
 // REPR_C encodes qstrs, 31-bit ints, and 30-bit floats in a single 32-bit word.
 #ifndef MICROPY_OBJ_REPR
@@ -58,6 +43,7 @@ extern void common_hal_mcu_enable_interrupts(void);
 // MicroPython-only options not used by CircuitPython, but present in various files
 // inherited from MicroPython, especially in extmod/
 #define MICROPY_ENABLE_DYNRUNTIME        (0)
+#define MICROPY_HW_ENABLE_USB_RUNTIME_DEVICE (0)
 #define MICROPY_PY_BLUETOOTH             (0)
 #define MICROPY_PY_LWIP_SLIP             (0)
 #define MICROPY_PY_OS_DUPTERM            (0)
@@ -87,7 +73,7 @@ extern void common_hal_mcu_enable_interrupts(void);
 #define MICROPY_TRACKED_ALLOC            (CIRCUITPY_SSL_MBEDTLS)
 #define MICROPY_ENABLE_SOURCE_LINE       (1)
 #define MICROPY_EPOCH_IS_1970            (1)
-#define MICROPY_ERROR_REPORTING          (MICROPY_ERROR_REPORTING_NORMAL)
+#define MICROPY_ERROR_REPORTING          (CIRCUITPY_FULL_BUILD ? MICROPY_ERROR_REPORTING_NORMAL : MICROPY_ERROR_REPORTING_TERSE)
 #define MICROPY_FLOAT_HIGH_QUALITY_HASH  (0)
 #define MICROPY_FLOAT_IMPL               (MICROPY_FLOAT_IMPL_FLOAT)
 #define MICROPY_GC_ALLOC_THRESHOLD       (0)
@@ -132,6 +118,7 @@ extern void common_hal_mcu_enable_interrupts(void);
 #define MICROPY_PY_BUILTINS_STR_UNICODE  (1)
 
 #define MICROPY_PY_BINASCII             (CIRCUITPY_BINASCII)
+#define MICROPY_PY_BINASCII_CRC32       (CIRCUITPY_BINASCII && CIRCUITPY_ZLIB)
 #define MICROPY_PY_CMATH                 (0)
 #define MICROPY_PY_COLLECTIONS           (CIRCUITPY_COLLECTIONS)
 #define MICROPY_PY_DESCRIPTORS           (1)
@@ -156,6 +143,7 @@ extern void common_hal_mcu_enable_interrupts(void);
 #define MICROPY_PY_SYS                   (CIRCUITPY_SYS)
 #define MICROPY_PY_SYS_MAXSIZE           (1)
 #define MICROPY_PY_SYS_STDFILES          (1)
+#define MICROPY_PY_UCTYPES               (0)
 #define MICROPY_PY___FILE__              (1)
 
 #define MICROPY_QSTR_BYTES_IN_HASH       (1)
@@ -258,6 +246,8 @@ typedef long mp_off_t;
 #endif
 #ifndef MICROPY_PY_COLLECTIONS_DEQUE
 #define MICROPY_PY_COLLECTIONS_DEQUE          (CIRCUITPY_FULL_BUILD)
+#define MICROPY_PY_COLLECTIONS_DEQUE_ITER     (CIRCUITPY_FULL_BUILD)
+#define MICROPY_PY_COLLECTIONS_DEQUE_SUBSCR   (CIRCUITPY_FULL_BUILD)
 #endif
 #define MICROPY_PY_RE_MATCH_GROUPS           (CIRCUITPY_RE)
 #define MICROPY_PY_RE_MATCH_SPAN_START_END   (CIRCUITPY_RE)
@@ -370,6 +360,11 @@ extern const struct _mp_obj_module_t nvm_module;
 #define ULAB_SUPPORTS_COMPLEX (0)
 #endif
 
+// The random module is fairly large.
+#ifndef ULAB_NUMPY_HAS_RANDOM_MODULE
+#define ULAB_NUMPY_HAS_RANDOM_MODULE (0)
+#endif
+
 #if CIRCUITPY_ULAB
 // ulab requires reverse special methods
 #if defined(MICROPY_PY_REVERSE_SPECIAL_METHODS) && !MICROPY_PY_REVERSE_SPECIAL_METHODS
@@ -413,9 +408,6 @@ extern const struct _mp_obj_module_t nvm_module;
 #include <alloca.h>
 
 #define MP_STATE_PORT MP_STATE_VM
-
-// From supervisor/memory.c
-struct _supervisor_allocation_node;
 
 void background_callback_run_all(void);
 #define RUN_BACKGROUND_TASKS (background_callback_run_all())
@@ -607,5 +599,3 @@ void background_callback_run_all(void);
 // Enable compiler functionality.
 #define MICROPY_ENABLE_COMPILER (1)
 #define MICROPY_PY_BUILTINS_COMPILE (1)
-
-#endif  // __INCLUDED_MPCONFIG_CIRCUITPY_H

@@ -1,10 +1,14 @@
+// This file is part of the CircuitPython project: https://circuitpython.org
+//
+// SPDX-FileCopyrightText: Copyright (c) 2023 Bill Sideris, independently providing these changes.
+//
+// SPDX-License-Identifier: MIT
+
 #include "py/objtuple.h"
 #include "shared-bindings/board/__init__.h"
 #include "shared-module/displayio/__init__.h"
 
-CIRCUITPY_BOARD_BUS_SINGLETON(cam_i2c, i2c, 1) // Camera sensor
-
-STATIC const mp_rom_obj_tuple_t camera_data_tuple = {
+static const mp_rom_obj_tuple_t camera_data_tuple = {
     // The order matters.
     // They must be ordered from low to high (Y2, Y3 .. Y9).
 
@@ -24,7 +28,7 @@ STATIC const mp_rom_obj_tuple_t camera_data_tuple = {
 };
 
 
-STATIC const mp_rom_map_elem_t board_module_globals_table[] = {
+static const mp_rom_map_elem_t board_module_globals_table[] = {
     CIRCUITPYTHON_BOARD_DICT_STANDARD_ITEMS
 
     // Left header, module facing down.
@@ -43,9 +47,8 @@ STATIC const mp_rom_map_elem_t board_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_SCL),      MP_ROM_PTR(&pin_GPIO2) },
 
     { MP_ROM_QSTR(MP_QSTR_IO1),      MP_ROM_PTR(&pin_GPIO1) },
-    { MP_ROM_QSTR(MP_QSTR_SDA),      MP_ROM_PTR(&pin_GPIO3) },
+    { MP_ROM_QSTR(MP_QSTR_SDA),      MP_ROM_PTR(&pin_GPIO1) },
 
-    // I2C cannot be used when CAM_I2C is in use.
     { MP_ROM_QSTR(MP_QSTR_I2C),  MP_ROM_PTR(&board_i2c_obj) },
 
     { MP_ROM_QSTR(MP_QSTR_IO0),      MP_ROM_PTR(&pin_GPIO0) },
@@ -95,6 +98,9 @@ STATIC const mp_rom_map_elem_t board_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_IO5),      MP_ROM_PTR(&pin_GPIO5) },
     { MP_ROM_QSTR(MP_QSTR_A1),       MP_ROM_PTR(&pin_GPIO5) },
 
+    { MP_ROM_QSTR(MP_QSTR_IO4),      MP_ROM_PTR(&pin_GPIO4) },
+    { MP_ROM_QSTR(MP_QSTR_A0),       MP_ROM_PTR(&pin_GPIO4) },
+
     { MP_ROM_QSTR(MP_QSTR_IO21),     MP_ROM_PTR(&pin_GPIO21)},
     { MP_ROM_QSTR(MP_QSTR_D13),      MP_ROM_PTR(&pin_GPIO21)},
     { MP_ROM_QSTR(MP_QSTR_LED),      MP_ROM_PTR(&pin_GPIO21)},
@@ -115,7 +121,5 @@ STATIC const mp_rom_map_elem_t board_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_CAM_HREF),  MP_ROM_PTR(&pin_GPIO42)},
     { MP_ROM_QSTR(MP_QSTR_CAM_PCLK),  MP_ROM_PTR(&pin_GPIO5) },
     { MP_ROM_QSTR(MP_QSTR_CAM_XCLK),  MP_ROM_PTR(&pin_GPIO45)},
-
-    { MP_ROM_QSTR(MP_QSTR_CAM_I2C),   MP_ROM_PTR(&board_cam_i2c_obj)},
 };
 MP_DEFINE_CONST_DICT(board_module_globals, board_module_globals_table);
