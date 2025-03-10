@@ -369,6 +369,9 @@ endif
 ifeq ($(CIRCUITPY_SOCKETPOOL),1)
 SRC_PATTERNS += socketpool/%
 endif
+ifeq ($(CIRCUITPY_SPITARGET),1)
+SRC_PATTERNS += spitarget/%
+endif
 ifeq ($(CIRCUITPY_SSL),1)
 SRC_PATTERNS += ssl/%
 endif
@@ -539,6 +542,8 @@ SRC_COMMON_HAL_ALL = \
 	socketpool/__init__.c \
 	socketpool/SocketPool.c \
 	socketpool/Socket.c \
+	spitarget/SPITarget.c \
+	spitarget/__init__.c \
 	usb_host/__init__.c \
 	usb_host/Port.c \
 	watchdog/WatchDogMode.c \
@@ -624,7 +629,9 @@ SRC_SHARED_MODULE_ALL = \
 	audiocore/WaveFile.c \
 	audiocore/__init__.c \
 	audiodelays/Echo.c \
+	audiodelays/PitchShift.c \
 	audiodelays/__init__.c \
+	audiofilters/Distortion.c \
 	audiofilters/Filter.c \
 	audiofilters/__init__.c \
 	audioio/__init__.c \
@@ -717,6 +724,7 @@ SRC_SHARED_MODULE_ALL = \
 	supervisor/__init__.c \
 	supervisor/StatusBar.c \
 	synthio/Biquad.c \
+	synthio/BlockBiquad.c \
 	synthio/LFO.c \
 	synthio/Math.c \
 	synthio/MidiTrack.c \
@@ -731,6 +739,7 @@ SRC_SHARED_MODULE_ALL = \
 	usb/__init__.c \
 	usb/core/__init__.c \
 	usb/core/Device.c \
+	usb/util/__init__.c \
 	ustack/__init__.c \
 	vectorio/Circle.c \
 	vectorio/Polygon.c \

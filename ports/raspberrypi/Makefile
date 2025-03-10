@@ -21,7 +21,20 @@ INC_CYW43 := \
 	-isystem sdk/src/rp2_common/pico_lwip/include/ \
 	-isystem sdk/src/rp2_common/pico_rand/include/ \
 
-CFLAGS_CYW43 := -DCYW43_LWIP=1 -DPICO_CYW43_ARCH_THREADSAFE_BACKGROUND=1 -DCYW43_USE_SPI -DIGNORE_GPIO25 -DIGNORE_GPIO23 -DIGNORE_GPIO24 -DCYW43_LOGIC_DEBUG=0 -DCYW43_USE_STATS=0 -DPICO_BUILD -DCYW43_ENABLE_BLUETOOTH=0 -DPICO_CYW43_ARCH_POLL=0
+CFLAGS_CYW43 := \
+	-DCYW43_LWIP=1 \
+	-DPICO_CYW43_ARCH_THREADSAFE_BACKGROUND=1 \
+	-DCYW43_USE_SPI \
+	-DIGNORE_GPIO25 \
+	-DIGNORE_GPIO23 \
+	-DIGNORE_GPIO24 \
+	-DCYW43_LOGIC_DEBUG=0 \
+	-DCYW43_USE_STATS=0 \
+	-DPICO_BUILD \
+	-DCYW43_ENABLE_BLUETOOTH=0 \
+	-DCIRCUITPY_CYW43_INIT_DELAY=$(CIRCUITPY_CYW43_INIT_DELAY) \
+	-DPICO_CYW43_ARCH_POLL=0
+
 SRC_SDK_CYW43 := \
 	src/common/pico_sync/sem.c \
 	src/rp2_common/pico_async_context/async_context_base.c \
@@ -93,6 +106,7 @@ INC += \
 	-isystem sdk/src/$(CHIP_VARIANT_LOWER)/hardware_regs/include/ \
 	-isystem sdk/src/$(CHIP_VARIANT_LOWER)/hardware_structs/include/ \
 	-isystem sdk/src/$(CHIP_VARIANT_LOWER)/pico_platform/include/ \
+	-isystem sdk/src/rp2_common/boot_bootrom_headers/include/ \
 	-isystem sdk/src/rp2_common/cmsis/ \
 	-isystem sdk/src/rp2_common/hardware_adc/include/ \
 	-isystem sdk/src/rp2_common/hardware_base/include/ \
@@ -120,10 +134,12 @@ INC += \
 	-isystem sdk/src/rp2_common/hardware_vreg/include/ \
 	-isystem sdk/src/rp2_common/hardware_watchdog/include/ \
 	-isystem sdk/src/rp2_common/hardware_xosc/include/ \
+	-isystem sdk/src/rp2_common/hardware_xip_cache/include/ \
 	-isystem sdk/src/rp2_common/pico_aon_timer/include/ \
 	-isystem sdk/src/rp2_common/pico_atomic/include/ \
 	-isystem sdk/src/rp2_common/pico_bootrom/include/ \
 	-isystem sdk/src/rp2_common/pico_double/include/ \
+	-isystem sdk/src/rp2_common/pico_flash/include/ \
 	-isystem sdk/src/rp2_common/pico_mem_ops/include/ \
 	-isystem sdk/src/rp2_common/pico_multicore/include/ \
 	-isystem sdk/src/rp2_common/pico_fix/rp2040_usb_device_enumeration/include/ \
@@ -192,7 +208,7 @@ CFLAGS += $(OPTIMIZATION_FLAGS)
 CFLAGS += $(CFLAGS_CYW43)
 #Debugging/Optimization
 ifeq ($(DEBUG), 1)
-  CFLAGS += -ggdb3 -O3
+  CFLAGS += -ggdb3 -Og
   # No LTO because we may place some functions in RAM instead of flash.
 else
   CFLAGS += -DNDEBUG
@@ -204,8 +220,7 @@ else
   endif
 endif
 
-# Remove -Wno-stringop-overflow after we can test with CI's GCC 10. Mac's looks weird.
-DISABLE_WARNINGS = -Wno-stringop-overflow -Wno-cast-align
+DISABLE_WARNINGS = -Wno-cast-align
 
 CFLAGS += $(INC) -Wall -Werror -std=gnu11 -fshort-enums $(BASE_CFLAGS) $(CFLAGS_MOD) $(COPT) $(DISABLE_WARNINGS) -Werror=missing-prototypes
 
@@ -440,7 +455,7 @@ SRC_S_UPPER_CHIP_VARIANT := \
 	sdk/src/rp2_common/pico_double/double_fma_dcp.S \
 	sdk/src/rp2_common/pico_double/double_sci_m33.S \
 	sdk/src/rp2_common/pico_float/float_sci_m33_vfp.S \
-	sdk/src/rp2_common/pico_float/float_conv_m33.S \
+	sdk/src/rp2_common/pico_float/float_common_m33.S \
 
 PICO_LDFLAGS += $(PICO_WRAP_FLOAT_SCI_FLAGS) $(PICO_WRAP_DOUBLE_FLAGS)
 
@@ -483,6 +498,7 @@ SRC_SDK := \
 	src/rp2_common/hardware_uart/uart.c \
 	src/rp2_common/hardware_vreg/vreg.c \
 	src/rp2_common/hardware_watchdog/watchdog.c \
+	src/rp2_common/hardware_xip_cache/xip_cache.c \
 	src/rp2_common/hardware_xosc/xosc.c \
 	src/rp2_common/pico_aon_timer/aon_timer.c \
 	src/rp2_common/pico_atomic/atomic.c \
@@ -541,6 +557,7 @@ ifeq ($(CIRCUITPY_PICODVI),1)
 SRC_C += \
 	bindings/picodvi/__init__.c \
 	bindings/picodvi/Framebuffer.c \
+	common-hal/picodvi/__init__.c \
 	common-hal/picodvi/Framebuffer_$(CHIP_VARIANT).c \
 
 ifeq ($(CHIP_VARIANT),RP2040)
